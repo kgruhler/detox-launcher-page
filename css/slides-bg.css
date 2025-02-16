@@ -1,0 +1,31 @@
+/* Slide 1 Background: Warm morning gradient with a subtle bokeh overlay */
+.slide-1 {
+    background: linear-gradient(135deg, #F6D365, #FDA085);
+    position: relative;
+    overflow: hidden;
+  }
+  .slide-1::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: url('bokeh-overlay.png') center/cover no-repeat;
+    opacity: 0.2; /* Adjust for desired effect */
+    pointer-events: none;
+  }
+  
+  /* Slide 2 Background: Cool, neutral gradient with a fine texture */
+  .slide-2 {
+    background: linear-gradient(135deg, #E0E5EC, #FFFFFF);
+    background-image: url('subtle-texture.png'); /* Optional texture overlay */
+    background-size: cover;
+  }
+  
+  /* Slide 3 Background: Darker gradient with a subtle geometric pattern */
+  .slide-3 {
+    background: linear-gradient(135deg, #2C3E50, #4CA1AF);
+    background-image: url('geometric-pattern.png'); /* Optional geometric overlay */
+    background-blend-mode: overlay;
+    background-size: cover;
+  }
+  
