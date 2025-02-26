@@ -29,3 +29,35 @@
     background-size: cover;
   }
   
+  /* Rainbow text animation for h1 headings */
+  h1 {
+    background-image: linear-gradient(to right, 
+      #ff0000, /* Red */
+      #ff8000, /* Orange */
+      #ffff00, /* Yellow */
+      #00ff00, /* Green */
+      #0000ff, /* Blue */
+      #4b0082, /* Indigo */
+      #9400d3  /* Violet */
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    background-size: 200% auto;
+    animation: rainbow 5s linear infinite;
+  }
+  
+  /* Special style for the Detox Launcher heading in the top panel */
+  .panel.top h1 {
+    font-weight: 800 !important;
+    animation: rainbow 5s linear 1 forwards;
+  }
+  
+  @keyframes rainbow {
+    0% {
+      background-position: 0% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
