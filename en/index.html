@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Detox Launcher</title>
+<meta name="description" content="Detox Launcher: a calm, minimal home screen for Android. No icons, no badges, no ads. With screen time and smart search.">
+<style>
+@font-face { font-family: "Roboto Flex"; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url(../fonts/roboto-flex-latin.woff2) format("woff2"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url(../fonts/roboto-latin.woff2) format("woff2"); }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<link rel="canonical" href="https://detox-launcher.com/en/">
+<link rel="alternate" hreflang="de" href="https://detox-launcher.com/">
+<link rel="alternate" hreflang="en" href="https://detox-launcher.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://detox-launcher.com/en/">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0b0f1e">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://detox-launcher.com/en/">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Detox Launcher: Less phone. More life.">
+<meta property="og:description" content="A calm home screen for Android. No icons, no badges, no ads.">
+<meta property="og:image" content="https://detox-launcher.com/img/og-en.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/roboto-flex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Detox Launcher","operatingSystem":"Android 11+","applicationCategory":"LifestyleApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"url":"https://detox-launcher.com/en/","downloadUrl":"https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher"}</script>
+<style>
+/* Layout: eine ruhige Spalte, die wie der Launcher selbst arbeitet. Viel Dunkel, dünne Wörter, ein fettes Element pro Abschnitt. */
+:root {
+  --bg: #0b0f1e;
+  --bg-2: #121830;
+  --fg: #eef0f7;
+  --muted: #98a0b8;
+  --line: #242b46;
+  --dusk: #e3a576;
+  --glow: rgba(227, 165, 118, .16);
+  --btn-bg: #eef0f7;
+  --btn-fg: #0b0f1e;
+  --font: "Roboto Flex", Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --s-xs: 13px; --s-sm: 15px; --s-md: 17px; --s-lg: 22px; --s-xl: clamp(28px, 4vw, 40px); --s-xxl: clamp(42px, 7.4vw, 96px);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #eef0f5; --bg-2: #e2e5ee; --fg: #131729; --muted: #575e75; --line: #cfd3e0;
+    --dusk: #b4612f; --glow: rgba(180, 97, 47, .12); --btn-bg: #131729; --btn-fg: #eef0f5;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #eef0f5; --bg-2: #e2e5ee; --fg: #131729; --muted: #575e75; --line: #cfd3e0;
+  --dusk: #b4612f; --glow: rgba(180, 97, 47, .12); --btn-bg: #131729; --btn-fg: #eef0f5;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font);
+  font-size: var(--s-md); line-height: 1.55; font-weight: 350;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: inherit; }
+h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 200; letter-spacing: -.02em; line-height: 1.04; }
+p { margin: 0; }
+:focus-visible { outline: 2px solid var(--dusk); outline-offset: 3px; border-radius: 6px; }
+
+/* Kopfzeile */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 22px; }
+.mark { font-weight: 300; font-size: var(--s-md); letter-spacing: .01em; text-decoration: none; }
+.mark b { font-weight: 800; }
+.top-nav { display: flex; align-items: center; gap: 18px; }
+.top-link { font-size: var(--s-sm); color: var(--muted); text-decoration: none; }
+.top-link:hover { color: var(--fg); }
+
+/* Hero */
+.hero { position: relative; }
+.hero::before {
+  content: ""; position: absolute; inset: 30% 0 -10% 0; pointer-events: none;
+  background: radial-gradient(60% 50% at 70% 60%, var(--glow), transparent 70%);
+}
+.hero-grid {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  gap: clamp(32px, 6vw, 80px); align-items: center; padding-block: clamp(24px, 6vw, 72px) clamp(48px, 7vw, 96px);
+}
+.hero h1 { font-size: var(--s-xxl); }
+.hero h1 b { font-weight: 800; display: block; letter-spacing: -.035em; }
+.lede { margin-top: 28px; max-width: 34ch; font-size: var(--s-lg); line-height: 1.45; color: var(--muted); font-weight: 300; }
+.lede strong { color: var(--fg); font-weight: 400; }
+.cta-row { margin-top: 36px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 12px; padding: 14px 24px 14px 20px;
+  background: var(--btn-bg); color: var(--btn-fg); border-radius: 999px; text-decoration: none;
+  font-weight: 600; font-size: var(--s-md); transition: transform .2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.facts { font-size: var(--s-xs); color: var(--muted); letter-spacing: .02em; }
+
+/* Telefon */
+.stage { display: grid; justify-items: center; gap: 18px; }
+.try { font-size: var(--s-xs); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.phone {
+  --pw: min(300px, 76vw);
+  width: var(--pw); aspect-ratio: 9 / 19.2; max-width: 100%;
+  border-radius: calc(var(--pw) * .14); padding: 9px; background: #07080b;
+  box-shadow: 0 0 0 1px #2a2d36, 0 40px 80px -30px rgba(0,0,0,.6);
+  position: relative; user-select: none; -webkit-user-select: none;
+}
+.screen {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  border-radius: calc(var(--pw) * .125); color: #fff; touch-action: none; cursor: grab;
+  font-family: Roboto, "Roboto Flex", system-ui, sans-serif;
+  background: linear-gradient(180deg, #0a0f20 0%, #141b33 38%, #2a3150 56%, #6f5d70 70%, #c99073 79%, #d9a37b 82%);
+}
+.screen:active { cursor: grabbing; }
+.cam { position: absolute; top: 12px; left: 50%; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; background: #000; z-index: 9; }
+.stars { position: absolute; left: 0; top: 0; width: 1px; height: 1px; border-radius: 50%; }
+.mtn { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 34%; display: block; }
+.homebar { position: absolute; left: 50%; bottom: 7px; width: 34%; height: 4px; margin-left: -17%; border-radius: 4px; background: rgba(255,255,255,.85); z-index: 8; border: 0; padding: 0; cursor: pointer; }
+
+.view { position: absolute; inset: 0; transition: transform .38s cubic-bezier(.2,.8,.2,1), opacity .3s ease; }
+.home { display: flex; flex-direction: column; align-items: center; padding: 18% 8% 0; text-align: center; }
+.tapbtn { background: none; border: 0; color: inherit; font: inherit; padding: 0; cursor: pointer; border-radius: 4px; }
+.tapbtn:hover { background: rgba(255,255,255,.06); }
+.clock { font-weight: 700; font-size: calc(var(--pw) * .225); line-height: 1; letter-spacing: 0; }
+.date { margin-top: 6px; font-weight: 700; font-size: calc(var(--pw) * .047); }
+.info { margin-top: 4px; font-size: calc(var(--pw) * .042); opacity: .8; font-weight: 400; }
+.apps { margin-top: auto; margin-bottom: 30%; display: grid; gap: calc(var(--pw) * .018); justify-items: center; width: 100%; }
+.app {
+  background: none; border: 0; color: #fff; font: inherit; cursor: pointer; padding: 2px 10px;
+  font-weight: 200; font-size: calc(var(--pw) * .072); line-height: 1.25; text-shadow: 0 1px 6px rgba(0,0,0,.25);
+  display: inline-flex; align-items: center; gap: 6px; border-radius: 6px;
+}
+.app:hover { background: rgba(255,255,255,.06); }
+.dots { color: #f0b98c; font-size: .7em; letter-spacing: 1px; }
+.sep { width: 34%; height: 1px; background: rgba(255,255,255,.35); margin: 4px 0; }
+
+.drawer { background: rgba(8, 11, 24, .96); transform: translateY(100%); display: flex; flex-direction: column; padding: 15% 0 0; }
+.screen.is-drawer .drawer { transform: translateY(0); }
+.screen.is-drawer .home { transform: translateY(-12%); opacity: 0; }
+.search { display: flex; align-items: center; gap: 10px; padding: 0 9% 10px; }
+.search svg { width: 18px; height: 18px; flex: none; opacity: .9; }
+.search input {
+  flex: 1; min-width: 0; background: none; border: 0; color: #fff; font: inherit;
+  font-size: calc(var(--pw) * .06); font-weight: 400; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,.18);
+}
+.search input::placeholder { color: rgba(255,255,255,.45); }
+.search input:focus { outline: none; border-bottom-color: rgba(255,255,255,.6); }
+.list-wrap { position: relative; flex: 1; min-height: 0; display: flex; }
+.list { flex: 1; overflow-y: auto; padding: 4px 9% 30px 16%; touch-action: pan-y; scrollbar-width: none; }
+.list::-webkit-scrollbar { display: none; }
+.list .app { justify-content: flex-start; font-size: calc(var(--pw) * .066); padding: 3px 8px; margin-left: -8px; text-align: left; }
+.list .app .min { font-size: .45em; opacity: .55; font-weight: 400; }
+.list .app.hit { background: rgba(255,255,255,.12); }
+.label { font-size: calc(var(--pw) * .04); opacity: .55; margin: 10px 0 2px; }
+.row-contact { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.row-contact svg, .web svg { width: 15px; height: 15px; flex: none; opacity: .9; }
+.web { margin-top: 10px; }
+.alpha { display: flex; flex-direction: column; justify-content: center; gap: 1px; padding-right: 6px; }
+.alpha button { background: none; border: 0; color: rgba(255,255,255,.55); font: inherit; font-size: calc(var(--pw) * .032); padding: 0 4px; cursor: pointer; line-height: 1.25; }
+.alpha button:hover { color: #fff; }
+
+.sheet-scrim { position: absolute; inset: 0; background: rgba(0,0,0,.45); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 6; }
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 7; padding: 18px 8% 34px;
+  background: #121628; border-radius: 18px 18px 0 0; transform: translateY(105%);
+  transition: transform .32s cubic-bezier(.2,.8,.2,1);
+}
+.screen.is-sheet .sheet { transform: translateY(0); }
+.screen.is-sheet .sheet-scrim { opacity: 1; pointer-events: auto; }
+.sheet h4 { margin: 0 0 10px; font-weight: 300; font-size: calc(var(--pw) * .068); }
+.sheet .opt { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,.08); font-size: calc(var(--pw) * .046); font-weight: 300; }
+.sheet .opt small { opacity: .6; font-size: .85em; }
+.sheet .new { color: #f0b98c; }
+.bars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; align-items: end; height: 90px; margin: 12px 0 6px; }
+.bar { background: rgba(255,255,255,.85); border-radius: 3px 3px 1px 1px; }
+.bar.dim { background: rgba(255,255,255,.35); }
+.bar-l { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-size: calc(var(--pw) * .033); opacity: .65; text-align: center; }
+.big { font-weight: 300; font-size: calc(var(--pw) * .12); line-height: 1.05; }
+.sample { font-size: calc(var(--pw) * .03); opacity: .45; margin-top: 10px; }
+
+.toast {
+  position: absolute; left: 50%; bottom: 9%; transform: translate(-50%, 8px); z-index: 9;
+  background: rgba(20,24,42,.92); padding: 7px 14px; border-radius: 999px; white-space: nowrap;
+  font-size: calc(var(--pw) * .04); opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none;
+}
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* Fingerspur der Selbstvorführung */
+.finger {
+  position: absolute; left: 50%; top: 82%; width: 30px; height: 30px; margin: -15px 0 0 -15px; z-index: 10;
+  border-radius: 50%; background: rgba(255,255,255,.28); box-shadow: 0 0 0 1px rgba(255,255,255,.5), 0 0 18px rgba(255,255,255,.25);
+  opacity: 0; pointer-events: none; transition: opacity .25s ease, top .7s cubic-bezier(.3,.7,.2,1);
+}
+.finger.on { opacity: 1; }
+.finger.up { top: 40%; }
+
+/* Einmalige Animationen beim Hineinscrollen. Ruhezustand ist immer sichtbar. */
+@keyframes dot-in { 0% { opacity: 0; transform: scale(.2); } 60% { opacity: 1; transform: scale(1.5); } 100% { opacity: 1; transform: scale(1); } }
+.people-demo .d { display: inline-block; }
+.people-demo.play .d { animation: dot-in .6s cubic-bezier(.3,.7,.2,1) both; }
+.people-demo.play .d:nth-of-type(1) { animation-delay: .35s; }
+.people-demo.play .d.d2 { animation-delay: .9s; }
+.people-demo.play .d.d3 { animation-delay: 1.05s; }
+@keyframes bar-in { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.st-chart div { transform-origin: 50% 100%; }
+.st-chart.play div { animation: bar-in .6s cubic-bezier(.3,.7,.2,1) both; }
+
+/* Einhandbedienung (zweites Telefon) */
+.drawer2 { position: absolute; inset: 0; background: rgba(8, 11, 24, .96); display: flex; flex-direction: column; padding-top: 15%; }
+.search .ph { font-size: calc(var(--pw) * .06); color: rgba(255,255,255,.45); flex: 1; border-bottom: 1px solid rgba(255,255,255,.18); padding: 4px 0; }
+.list2 { position: relative; flex: 1; min-height: 0; overflow-y: auto; padding: 4px 18% 45% 16%; scrollbar-width: none; touch-action: pan-y; }
+.list2::-webkit-scrollbar { display: none; }
+.list2 .it { display: block; width: fit-content; margin-left: -8px; padding: 0 8px; border-radius: 6px; font-weight: 200; font-size: calc(var(--pw) * .066); line-height: 1.5; cursor: pointer; }
+.list2 .it.hit { background: rgba(255,255,255,.14); }
+.reach { position: absolute; right: 0; bottom: 0; width: 100%; height: auto; pointer-events: none; z-index: 5; }
+.alpha2 {
+  position: absolute; right: 2%; top: 30%; bottom: 9%; width: 14%; z-index: 7; touch-action: none; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+  font-size: calc(var(--pw) * .036); color: rgba(255,255,255,.55);
+}
+.alpha2 span { transition: transform .12s, color .12s; }
+.alpha2 span.cur { color: #fff; font-weight: 700; transform: scale(1.35); }
+.alpha2.armed span.cur { color: #f0b98c; }
+.bubble {
+  position: absolute; left: 50%; top: 40%; width: 46%; aspect-ratio: 1; z-index: 8; padding: 8px;
+  transform: translate(-50%, -50%) scale(.92); background: #1c2138; border-radius: 18px;
+  display: grid; place-content: center; justify-items: center; text-align: center;
+  opacity: 0; transition: opacity .15s, transform .15s, box-shadow .15s; pointer-events: none;
+}
+.bubble.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.bubble.armed { box-shadow: 0 0 0 1.5px rgba(240,185,140,.75); }
+.bubble b { font-weight: 300; font-size: calc(var(--pw) * .26); line-height: 1; }
+.bubble.app b { font-size: calc(var(--pw) * .074); line-height: 1.2; }
+.bubble small { font-size: calc(var(--pw) * .033); opacity: .6; margin-top: 6px; }
+.bubble small:empty { display: none; }
+.arrow2 {
+  position: absolute; z-index: 9; transform: translate(-50%, -100%); pointer-events: none;
+  font-size: calc(var(--pw) * .06); color: #f0b98c; opacity: 0; transition: opacity .15s;
+}
+.arrow2.on { opacity: 1; }
+.thumb {
+  position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; z-index: 10; border-radius: 50%;
+  background: rgba(255,255,255,.26); box-shadow: 0 0 0 1px rgba(255,255,255,.5), 0 0 18px rgba(255,255,255,.22);
+  opacity: 0; transition: opacity .2s; pointer-events: none;
+}
+.thumb.on { opacity: 1; }
+.steps { margin: 22px 0 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 12px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: baseline; color: var(--muted); }
+.steps li::before { content: counter(s); font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; }
+.steps strong { color: var(--fg); font-weight: 500; }
+.small-note { margin-top: 18px; font-size: var(--s-sm); color: var(--muted); }
+
+.hints { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 360px; }
+.hint {
+  font: inherit; font-size: var(--s-xs); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--line); border-radius: 999px; padding: 7px 13px; transition: border-color .2s;
+}
+.hint:hover { border-color: var(--muted); }
+
+/* Abschnitte */
+section { padding-block: clamp(64px, 10vw, 128px); }
+.rule { border-top: 1px solid var(--line); }
+.eyebrow { font-size: var(--s-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+
+.statement h2 { font-size: var(--s-xxl); }
+.statement h2 b { font-weight: 800; }
+.statement p { margin-top: 32px; max-width: 52ch; font-size: var(--s-lg); line-height: 1.5; color: var(--muted); font-weight: 300; }
+
+.feature { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 88px); align-items: center; }
+.feature + .feature { margin-top: clamp(72px, 10vw, 128px); }
+.feature h3 { font-size: var(--s-xl); font-weight: 250; }
+.feature h3 b { font-weight: 750; }
+.feature p { margin-top: 18px; max-width: 46ch; color: var(--muted); }
+.feature ul { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; color: var(--muted); font-size: var(--s-sm); }
+.feature li::before { content: "–"; margin-right: 10px; color: var(--fg); }
+.tag { display: inline-block; font-size: var(--s-xs); letter-spacing: .08em; text-transform: uppercase; color: var(--dusk); border: 1px solid currentColor; border-radius: 999px; padding: 2px 10px; margin-bottom: 16px; }
+
+.visual { background: var(--bg-2); border-radius: 22px; padding: clamp(24px, 4vw, 44px); min-width: 0; }
+.people-demo { display: grid; justify-items: center; gap: 6px; font-weight: 200; font-size: clamp(26px, 3.4vw, 36px); }
+.people-demo .d { color: var(--dusk); font-size: .6em; vertical-align: middle; margin-left: 6px; }
+.people-demo hr { width: 90px; border: 0; border-top: 1px solid var(--line); margin: 10px 0; }
+.people-demo .muted { color: var(--muted); }
+.people-note { margin-top: 22px; text-align: center; font-size: var(--s-xs); color: var(--muted); }
+
+.st-today { font-weight: 200; font-size: clamp(44px, 6vw, 68px); line-height: 1; }
+.st-sub { color: var(--muted); font-size: var(--s-sm); margin-top: 6px; }
+.st-chart { margin-top: 28px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; align-items: end; height: 150px; }
+.st-chart div { background: var(--fg); opacity: .22; border-radius: 4px 4px 2px 2px; }
+.st-chart div.now { opacity: 1; }
+.st-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 8px; text-align: center; font-size: var(--s-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
+.st-days .now { color: var(--fg); font-weight: 600; }
+.st-note { margin-top: 18px; font-size: var(--s-xs); color: var(--muted); }
+
+.shots-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.shot { margin: 0; display: grid; gap: 10px; }
+.shot img { width: 100%; height: auto; aspect-ratio: 420 / 935; object-fit: cover; border-radius: 18px; display: block; box-shadow: 0 0 0 1px var(--line); background: #0a0f20; }
+.shot figcaption { font-size: var(--s-xs); color: var(--muted); text-align: center; }
+
+.more { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 40px; margin-top: 48px; }
+.more h4 { margin: 0 0 6px; font-size: var(--s-md); font-weight: 600; }
+.more p { color: var(--muted); font-size: var(--s-sm); }
+.more-head h2 { font-size: var(--s-xl); font-weight: 250; }
+
+.strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(180px, 230px); gap: 18px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x mandatory; margin-top: 40px; }
+.strip .shot { scroll-snap-align: start; }
+
+.promise { text-align: left; }
+.promise-lines { display: grid; gap: 4px; font-size: var(--s-xxl); font-weight: 200; letter-spacing: -.03em; line-height: 1.02; }
+.promise-lines b { font-weight: 800; }
+.promise-grid { margin-top: 48px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 48px; max-width: 900px; }
+.promise-grid h4 { margin: 0 0 6px; font-size: var(--s-md); font-weight: 600; }
+.promise-grid p { color: var(--muted); font-size: var(--s-sm); }
+
+.final { text-align: center; }
+.final h2 { font-size: var(--s-xxl); }
+.final h2 b { font-weight: 800; }
+.final p { margin: 22px auto 0; max-width: 40ch; color: var(--muted); font-size: var(--s-lg); font-weight: 300; }
+.final .cta-row { justify-content: center; }
+
+footer { border-top: 1px solid var(--line); padding-block: 32px 48px; font-size: var(--s-xs); color: var(--muted); }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 32px; }
+.foot nav { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.foot a { text-decoration: none; }
+.foot a:hover { color: var(--fg); }
+
+@media (max-width: 860px) {
+  .hero-grid, .feature { grid-template-columns: minmax(0, 1fr); }
+  .feature .visual { order: 2; }
+  .more { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .more, .promise-grid { grid-template-columns: minmax(0, 1fr); }
+  .shots-pair { gap: 10px; }
+  .lede { font-size: var(--s-md); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="#top" id="top"><b>Detox</b> Launcher</a>
+    <nav class="top-nav"><a class="top-link" href="../" hreflang="de" lang="de">Deutsch</a><a class="top-link" href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher&amp;hl=en" target="_blank" rel="noopener">Google Play ↗</a></nav>
+  </header>
+</div>
+
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>Less phone. <b>More life.</b></h1>
+      <p class="lede">A calm home screen for Android: <strong>the time, the date and the few apps you actually need.</strong> No icons, no red badges, no feed.</p>
+      <div class="cta-row">
+        <a class="btn" href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher&amp;hl=en" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.2 2.6c-.3.3-.4.7-.4 1.2v16.4c0 .5.1.9.4 1.2l9.2-9.4-9.2-9.4Zm10.5 8.1 2.7-2.8L6.6 1.9c-.5-.3-1-.3-1.4-.1l9.5 8.9Zm0 2.6-9.5 8.9c.4.2.9.2 1.4-.1l10.8-6-2.7-2.8Zm4.1-4.6-2.9 1.6L13.6 12l2.3 2.3 2.9-1.6c.8-.5.8-1.6 0-2.1v.1Z"/></svg>
+          Free on Google Play
+        </a>
+        <span class="facts">Android 11+ · no ads · 12 languages</span>
+      </div>
+    </div>
+
+    <div class="stage">
+      <span class="try">Try it</span>
+      <div class="phone">
+        <div class="screen" id="screen" aria-label="Interactive preview of Detox Launcher">
+          <span class="cam"></span>
+          <span class="stars" id="stars"></span>
+          <svg class="mtn" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+            <path fill="#7d6c7e" d="M0 60 L30 40 L58 52 L92 22 L124 48 L150 34 L182 58 L214 28 L248 50 L276 36 L300 46 V200 H0Z"/>
+            <path fill="#55506a" d="M0 92 L26 70 L52 84 L84 56 L118 90 L146 66 L176 96 L204 70 L236 98 L268 74 L300 88 V200 H0Z"/>
+            <path fill="#3a3850" d="M0 128 L34 104 L64 122 L96 98 L132 130 L162 108 L196 136 L228 112 L262 134 L300 116 V200 H0Z"/>
+            <path fill="#262535" d="M0 164 L40 140 L76 158 L112 144 L150 168 L190 146 L226 166 L262 150 L300 162 V200 H0Z"/>
+          </svg>
+
+          <div class="view home" id="home">
+            <button class="tapbtn clock" id="clock" data-open="Clock" aria-label="Open clock app">09:41</button>
+            <div class="date"><button class="tapbtn" id="date" data-open="Calendar">Sat, 07.11.2026</button> · <button class="tapbtn" data-act="stats" aria-label="Show this week's screen time">1 h 12 min</button></div>
+            <div class="info"><span>6° cloudy</span> · <button class="tapbtn" data-open="Calendar">14:35 Dentist</button></div>
+            <div class="apps" id="homeApps">
+              <button class="app" data-person="Anna">Anna <span class="dots">•</span></button>
+              <button class="app" data-person="Dad">Dad</button>
+              <button class="app" data-person="Lena">Lena <span class="dots">••</span></button>
+              <span class="sep"></span>
+              <button class="app" data-app="Camera">Camera</button>
+              <button class="app" data-app="Maps">Maps</button>
+              <button class="app" data-app="Messages">Messages</button>
+              <button class="app" data-app="Phone">Phone</button>
+            </div>
+          </div>
+
+          <div class="view drawer" id="drawer" aria-hidden="true">
+            <div class="search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 9.5 16a6.5 6.5 0 0 0 4.2-1.6l.3.3v.8l5 5 1.5-1.5-5-5Zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9Z"/></svg>
+              <input id="q" type="text" placeholder="Search" autocomplete="off" spellcheck="false" aria-label="Search apps">
+            </div>
+            <div class="list-wrap">
+              <div class="list" id="list"></div>
+              <div class="alpha" id="alpha"></div>
+            </div>
+          </div>
+
+          <div class="sheet-scrim" id="scrim"></div>
+          <div class="sheet" id="sheet" role="dialog" aria-modal="false"></div>
+          <div class="toast" id="toast"></div>
+          <span class="finger" id="finger" aria-hidden="true"></span>
+          <button class="homebar" id="homebar" aria-label="Go to home screen"></button>
+        </div>
+      </div>
+      <div class="hints">
+        <button class="hint" data-act="drawer">↑ Swipe: all apps</button>
+        <button class="hint" data-act="search">Search with a typo</button>
+        <button class="hint" data-act="quick">← → Swipe: quick launch</button>
+        <button class="hint" data-act="menu">Long-press: menu</button>
+        <button class="hint" data-act="stats">Tap screen time</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="rule statement">
+  <div class="wrap">
+    <h2>An icon lures.<br><b>A word waits.</b></h2>
+    <p>Colorful icons and red counters are designed to make you tap. Detox Launcher shows only words. You open an app because you need it, not because it glows.</p>
+  </div>
+</section>
+
+<section class="rule">
+  <div class="wrap">
+    <div class="feature">
+      <div>
+        <span class="tag">New</span>
+        <h3><b>Your people.</b> Instead of your apps.</h3>
+        <p>Three to five people sit right on your home screen, each exactly once, whether you text on WhatsApp, Signal, Threema or Telegram. A subtle dot shows that someone wrote. One tap opens the right chat.</p>
+        <ul>
+          <li>No groups, no stories, no feed</li>
+          <li>Messages from everyone else stay where they are</li>
+          <li>Focus time pauses apps, never your people</li>
+        </ul>
+      </div>
+      <div class="visual">
+        <div class="people-demo" aria-label="Example: three people above the favorites">
+          <span>Anna<span class="d">●</span></span>
+          <span>Dad</span>
+          <span>Lena<span class="d d2">●</span><span class="d d3">●</span></span>
+          <hr>
+          <span class="muted">Camera</span>
+          <span class="muted">Maps</span>
+        </div>
+        <p class="people-note">One dot: has written. Two dots: in several messengers.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div>
+        <h3><b>Screen time,</b> no extra app.</h3>
+        <p>How long you've used your phone today is shown right under the clock. Tap it to see your week and your most used apps. Once a week you get a short review. Your data stays on your device.</p>
+      </div>
+      <div class="visual" aria-label="Example of a weekly chart">
+        <div class="st-today">1 h 12 min</div>
+        <div class="st-sub">today · avg 1 h 38 min per day</div>
+        <div class="st-chart" id="stChart"></div>
+        <div class="st-days" id="stDays"></div>
+        <p class="st-note">Sample values</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div>
+        <h3><b>Search that thinks ahead.</b></h3>
+        <p>Swipe up and start typing. Search forgives typos, understands initials and puts the apps you use most first. If you like, it also finds contacts to call right away and searches the web with the engine of your choice.</p>
+        <ul>
+          <li>“camrea” finds Camera</li>
+          <li>“gm” finds Google Maps</li>
+          <li>Enter opens the first result</li>
+        </ul>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot"><img src="../img/en/search.webp" alt="Search with a typo: camrea finds Camera" width="420" height="935" loading="lazy"><figcaption>With a typo</figcaption></figure>
+        <figure class="shot"><img src="../img/en/contacts.webp" alt="Searching for ma shows Maps, Gmail and the contacts Mama and Max" width="420" height="935" loading="lazy"><figcaption>With contacts</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="feature" id="einhand">
+      <div>
+        <h3><b>One hand.</b> Every app.</h3>
+        <p>The alphabet bar sits low on the edge, right where your thumb already rests. You reach every app without shifting your grip and without typing.</p>
+        <ol class="steps">
+          <li><span><strong>Hold a letter</strong> until it locks in</span></li>
+          <li><span><strong>Swipe inward</strong> and that letter's apps appear</span></li>
+          <li><span><strong>Slide down</strong> and let go: the highlighted app opens</span></li>
+        </ol>
+        <p class="small-note">Swipe back to the bar to cancel. The bar can also sit on the left.</p>
+      </div>
+      <div class="stage">
+        <div class="phone">
+          <div class="screen" id="screen2" aria-label="Interactive preview: pick apps one-handed with the alphabet bar">
+            <span class="cam"></span>
+            <div class="drawer2">
+              <div class="search">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 9.5 16a6.5 6.5 0 0 0 4.2-1.6l.3.3v.8l5 5 1.5-1.5-5-5Zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9Z"/></svg>
+                <span class="ph">Search</span>
+              </div>
+              <div class="list2" id="list2"></div>
+            </div>
+            <svg class="reach" viewBox="0 0 300 300" aria-hidden="true">
+              <defs><radialGradient id="rg" cx="300" cy="300" r="250" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff" stop-opacity=".09"/><stop offset=".85" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+              </radialGradient></defs>
+              <circle cx="300" cy="300" r="250" fill="url(#rg)"/>
+            </svg>
+            <div class="alpha2" id="alpha2" aria-hidden="true"></div>
+            <div class="bubble" id="bubble2"><b id="bubbleTxt"></b><small id="bubbleSub"></small></div>
+            <span class="arrow2" id="arrow2">←</span>
+            <span class="thumb" id="thumb2"></span>
+            <div class="toast" id="toast2"></div>
+            <span class="homebar" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="hints">
+          <button class="hint" id="replay2">Watch again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="rule">
+  <div class="wrap">
+    <div class="more-head">
+      <p class="eyebrow">And also</p>
+      <h2>Calm, but yours.</h2>
+    </div>
+    <div class="more">
+      <div><h4>Gestures instead of icons</h4><p>Swipe left or right to launch your two quick-launch apps. Long-press opens the menu.</p></div>
+      <div><h4>Focus time</h4><p>Selected apps pause at set times every day. They vanish from the home screen and are grayed out in the list.</p></div>
+      <div><h4>Weather and next event</h4><p>One quiet line under the date. A home screen doesn't need more.</p></div>
+      <div><h4>Type and colors</h4><p>Weight, size and alignment of clock and apps. Colors can follow the time of day.</p></div>
+      <div><h4>Out of sight</h4><p>Rename or hide apps. Hidden apps wait at the end of the list.</p></div>
+      <div><h4>Set up in a minute</h4><p>A short assistant suggests your essential apps. Pick at least three and you're done.</p></div>
+    </div>
+    <div class="strip" aria-label="Screenshots">
+      <figure class="shot"><img src="../img/en/home.webp" alt="Home screen with clock, date, screen time and four apps" width="420" height="935" loading="lazy"><figcaption>Home screen</figcaption></figure>
+      <figure class="shot"><img src="../img/en/settings.webp" alt="Settings for font weight and gestures" width="420" height="935" loading="lazy"><figcaption>Settings</figcaption></figure>
+      <figure class="shot"><img src="../img/en/search.webp" alt="Search with a typo" width="420" height="935" loading="lazy"><figcaption>Search</figcaption></figure>
+      <figure class="shot"><img src="../img/en/contacts.webp" alt="Contacts in search" width="420" height="935" loading="lazy"><figcaption>Contacts</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="rule promise">
+  <div class="wrap">
+    <div class="promise-lines">
+      <span><b>No</b> ads.</span>
+      <span><b>No</b> tracking.</span>
+      <span><b>No</b> account.</span>
+    </div>
+    <div class="promise-grid">
+      <div><h4>Your data stays with you</h4><p>Screen time, contacts and calendar events are optional and processed only on your device. All permissions are listed in the settings at a glance.</p></div>
+      <div><h4>You can switch back anytime</h4><p>In Android's settings under “Default apps › Home app”, simply pick your old launcher again. Nothing gets deleted.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="rule final">
+  <div class="wrap">
+    <h2>Try it for a week.<br><b>Then check the clock.</b></h2>
+    <p>Free, no sign-up, set up in a minute.</p>
+    <div class="cta-row">
+      <a class="btn" href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher&amp;hl=en" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.2 2.6c-.3.3-.4.7-.4 1.2v16.4c0 .5.1.9.4 1.2l9.2-9.4-9.2-9.4Zm10.5 8.1 2.7-2.8L6.6 1.9c-.5-.3-1-.3-1.4-.1l9.5 8.9Zm0 2.6-9.5 8.9c.4.2.9.2 1.4-.1l10.8-6-2.7-2.8Zm4.1-4.6-2.9 1.6L13.6 12l2.3 2.3 2.9-1.6c.8-.5.8-1.6 0-2.1v.1Z"/></svg>
+        Free on Google Play
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 Kevin Paul, Laupheim · This site sets no cookies.</span>
+    <nav>
+      <a href="privacy.html">Privacy</a>
+      <a href="../impressum.html" hreflang="de">Legal notice</a>
+      <a href="mailto:kevin.p4ul@gmail.com">Contact</a>
+      <a href="../" hreflang="de" lang="de">Deutsch</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const screen = document.getElementById('screen');
+  const sheet = document.getElementById('sheet');
+  const toastEl = document.getElementById('toast');
+  const q = document.getElementById('q');
+  const list = document.getElementById('list');
+  const alpha = document.getElementById('alpha');
+  const drawer = document.getElementById('drawer');
+
+  /* Sterne */
+  (function () {
+    const s = []; let seed = 7;
+    const r = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    for (let i = 0; i < 70; i++) {
+      const a = (0.25 + r() * 0.6).toFixed(2);
+      s.push(`${Math.round(r() * 300)}px ${Math.round(r() * 380)}px 0 ${r() > .9 ? 0.6 : 0}px rgba(255,255,255,${a})`);
+    }
+    const el = document.getElementById('stars');
+    el.style.boxShadow = s.join(',');
+    el.style.transform = 'scale(' + (screen.clientWidth / 300).toFixed(3) + ')';
+    el.style.transformOrigin = '0 0';
+  })();
+
+  /* Uhr */
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const pad = n => String(n).padStart(2, '0');
+  function tick() {
+    const d = new Date();
+    document.getElementById('clock').textContent = pad(d.getHours()) + ':' + pad(d.getMinutes());
+    document.getElementById('date').textContent =
+      `${days[d.getDay()]}, ${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
+  }
+  tick(); setInterval(tick, 10000);
+
+  /* Wochenstatistik (Sample values) */
+  const week = [104, 131, 88, 97, 122, 141, 72];
+  function weekLabels() {
+    const out = []; const t = new Date();
+    for (let i = 6; i >= 0; i--) { const d = new Date(t); d.setDate(t.getDate() - i); out.push(days[d.getDay()]); }
+    return out;
+  }
+  const labels = weekLabels();
+  const max = Math.max(...week);
+  document.getElementById('stChart').innerHTML = week.map((m, i) =>
+    `<div class="${i === 6 ? 'now' : ''}" style="height:${(m / max * 100).toFixed(0)}%;animation-delay:${i * 70}ms" title="${Math.floor(m / 60)} h ${m % 60} min"></div>`).join('');
+  document.getElementById('stDays').innerHTML = labels.map((l, i) => `<span class="${i === 6 ? 'now' : ''}">${l}</span>`).join('');
+
+  /* Apps und Kontakte */
+  const apps = ['Alarm', 'Banking', 'Books', 'Calculator', 'Calendar', 'Camera', 'Chrome', 'Clock', 'Contacts', 'Gmail',
+    'Google Maps', 'Komoot', 'Messages', 'Music', 'Notes', 'Phone', 'Photos', 'Podcasts', 'Settings', 'Signal',
+    'Spotify', 'Threema', 'Trains', 'Weather', 'WhatsApp'];
+  const minutes = { 'Google Maps': '6 min', 'Chrome': '7 min', 'WhatsApp': '14 min', 'Camera': '2 min' };
+  const contacts = ['Anna Miller', 'Dad', 'Lena Berger', 'Max Mustermann', 'Mom'];
+
+  const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  function osa(a, b) {
+    const d = [];
+    for (let i = 0; i <= a.length; i++) { d[i] = [i]; }
+    for (let j = 0; j <= b.length; j++) { d[0][j] = j; }
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
+      const c = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + c);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+    }
+    return d[a.length][b.length];
+  }
+  function score(query, name) {
+    const qq = norm(query), n = norm(name);
+    if (!qq) return 0;
+    if (n.startsWith(qq)) return 100;
+    const words = n.split(/\s+/);
+    if (words.some(w => w.startsWith(qq))) return 90;
+    if (qq.length > 1 && words.map(w => w[0]).join('').startsWith(qq)) return 85;
+    if (n.includes(qq)) return 70;
+    if (qq.length >= 4) {
+      const best = Math.min(...words.map(w => osa(qq, w.slice(0, qq.length))), osa(qq, n.slice(0, qq.length)));
+      if (best <= (qq.length > 6 ? 2 : 1)) return 60 - best;
+    }
+    return -1;
+  }
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const phoneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></svg>';
+  const globeIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8ZM12 4c.8 1.2 1.5 2.5 1.9 4h-3.8c.4-1.5 1.1-2.8 1.9-4ZM4.3 14a8.2 8.2 0 0 1 0-4h3.4a16.5 16.5 0 0 0 0 4H4.3Zm.8 2h3a15.7 15.7 0 0 0 1.3 3.6A8 8 0 0 1 5.1 16Zm3-8h-3a8 8 0 0 1 4.3-3.6C8.8 5.5 8.4 6.7 8.1 8ZM12 20c-.8-1.2-1.5-2.5-1.9-4h3.8c-.4 1.5-1.1 2.8-1.9 4Zm2.3-6H9.7a14.7 14.7 0 0 1 0-4h4.6a14.7 14.7 0 0 1 0 4Zm.3 5.6c.6-1.1 1.1-2.3 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6Zm1.7-5.6a16.5 16.5 0 0 0 0-4h3.4a8.2 8.2 0 0 1 0 4h-3.4Z"/></svg>';
+
+  function renderList() {
+    const query = q.value.trim();
+    if (!query) {
+      let html = '', last = '';
+      apps.forEach(a => {
+        const L = norm(a)[0].toUpperCase();
+        const id = L !== last ? ` id="L-${L}"` : ''; last = L;
+        html += `<button class="app" data-app="${esc(a)}"${id}>${esc(a)}${minutes[a] ? ` <span class="min">${minutes[a]}</span>` : ''}</button><br>`;
+      });
+      list.innerHTML = html;
+      alpha.hidden = false;
+      return;
+    }
+    alpha.hidden = true;
+    const hits = apps.map(a => [a, score(query, a)]).filter(x => x[1] >= 0).sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0])).slice(0, 5);
+    const cHits = contacts.filter(c => score(query, c) >= 70).slice(0, 2);
+    let html = hits.map(([a], i) => `<button class="app${i === 0 ? ' hit' : ''}" data-app="${esc(a)}">${esc(a)}${minutes[a] ? ` <span class="min">${minutes[a]}</span>` : ''}</button><br>`).join('');
+    if (cHits.length) {
+      html += '<div class="label">Contacts</div>' + cHits.map(c =>
+        `<div class="row-contact"><button class="app" data-call="${esc(c)}">${esc(c)}</button>${phoneIcon}</div>`).join('');
+    }
+    html += `<button class="app web" data-web="1">${globeIcon} Search the web for “${esc(query)}”</button>`;
+    list.innerHTML = html;
+  }
+  const letters = [...new Set(apps.map(a => norm(a)[0].toUpperCase()))];
+  alpha.innerHTML = letters.map(L => `<button data-letter="${L}" aria-label="Jump to ${L}">${L}</button>`).join('');
+  renderList();
+  q.addEventListener('input', renderList);
+  q.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { const first = list.querySelector('[data-app]'); if (first && q.value.trim()) open(first.dataset.app); }
+    if (e.key === 'Escape') goHome();
+  });
+
+  /* Zustände */
+  let state = 'home';
+  function setDrawer(on) {
+    screen.classList.toggle('is-drawer', on);
+    drawer.setAttribute('aria-hidden', on ? 'false' : 'true');
+    state = on ? 'drawer' : 'home';
+  }
+  function goHome() { closeSheet(); setDrawer(false); q.value = ''; renderList(); q.blur(); }
+  function openDrawer(focusSearch) { closeSheet(); setDrawer(true); if (focusSearch) setTimeout(() => q.focus({ preventScroll: true }), 380); }
+
+  let toastT;
+  function toast(msg) {
+    toastEl.textContent = msg; toastEl.classList.add('on');
+    clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), 1500);
+  }
+  function open(name) { toast('Opening ' + name + ' …'); }
+  /* Schnellstart-Apps: in den Einstellungen frei wählbar */
+  const quickApps = { left: 'Spotify', right: 'Notes' };
+  function quick(dir) { toast((dir === 'left' ? '← ' : '→ ') + 'Opening ' + quickApps[dir] + ' …'); }
+
+  function showSheet(html) { sheet.innerHTML = html; screen.classList.add('is-sheet'); }
+  function closeSheet() { screen.classList.remove('is-sheet'); }
+  document.getElementById('scrim').addEventListener('click', closeSheet);
+
+  function appMenu(name) {
+    showSheet(`<h4>${esc(name)}</h4>
+      <div class="opt">Remove from favorites</div>
+      <div class="opt">Rename</div>
+      <div class="opt">Hide</div>
+      <div class="opt">Focus time</div>
+      <div class="opt">App info</div>`);
+  }
+  const people = {
+    Anna: { full: 'Anna Miller', rows: [['<span class="new">● Signal</span>', '<small class="new">new · 14:02</small>'], ['WhatsApp', '★'], ['Call', ''], ['SMS', '']] },
+    Dad: { full: 'Dad', rows: [['WhatsApp', '★'], ['Call', ''], ['WhatsApp call', '']] },
+    Lena: { full: 'Lena Berger', rows: [['<span class="new">● WhatsApp</span>', '<small class="new">new · 13:48</small>'], ['<span class="new">● Threema</span>', '<small class="new">new · 12:10</small>'], ['Call', '']] }
+  };
+  function personMenu(key) {
+    const p = people[key];
+    showSheet(`<h4>${esc(p.full)}</h4>` + p.rows.map(r => `<div class="opt"><span>${r[0]}</span><span>${r[1]}</span></div>`).join(''));
+  }
+  function stats() {
+    const lbl = weekLabels();
+    showSheet(`<h4>Screen time</h4>
+      <div class="big">1 h 12 min</div>
+      <div style="opacity:.7;font-size:.8em">today · avg 1 h 38 min per day</div>
+      <div class="bars">${week.map((m, i) => `<div class="bar${i === 6 ? '' : ' dim'}" style="height:${(m / max * 100).toFixed(0)}%"></div>`).join('')}</div>
+      <div class="bar-l">${lbl.map(l => `<span>${l}</span>`).join('')}</div>
+      <div class="sample">Sample values</div>`);
+  }
+
+  /* Gesten: Wischen, Tippen, lange Drücken */
+  let start = null, lpTimer = null, longFired = false;
+  screen.addEventListener('pointerdown', e => {
+    if (e.target.closest('input, .alpha, .homebar')) return;
+    start = { x: e.clientX, y: e.clientY, t: Date.now(), target: e.target, scrollTop: list.scrollTop };
+    longFired = false;
+    const hit = e.target.closest('[data-app], [data-person]');
+    clearTimeout(lpTimer);
+    lpTimer = setTimeout(() => {
+      longFired = true;
+      if (hit && hit.dataset.person) personMenu(hit.dataset.person);
+      else if (hit && hit.dataset.app) appMenu(hit.dataset.app);
+      else if (state === 'home') showSheet('<h4>Settings</h4><div class="opt">Home screen</div><div class="opt">Appearance</div><div class="opt">Screen time</div><div class="opt">Focus time</div><div class="opt">Your people</div>');
+    }, 480);
+  });
+  screen.addEventListener('pointermove', e => {
+    if (!start) return;
+    if (Math.abs(e.clientY - start.y) > 8 || Math.abs(e.clientX - start.x) > 8) clearTimeout(lpTimer);
+  });
+  function end(e) {
+    clearTimeout(lpTimer);
+    if (!start) return;
+    const dy = e.clientY - start.y, dx = e.clientX - start.x;
+    const s = start; start = null;
+    if (longFired) return;
+    if (screen.classList.contains('is-sheet')) return;
+    if (state === 'home' && dy < -40 && Math.abs(dy) > Math.abs(dx)) { openDrawer(false); return; }
+    if (state === 'home' && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { quick(dx > 0 ? 'right' : 'left'); return; }
+    if (state === 'drawer' && dy > 50 && s.scrollTop <= 0 && list.scrollTop <= 0 && Math.abs(dy) > Math.abs(dx)) { goHome(); return; }
+    if (Math.abs(dx) < 8 && Math.abs(dy) < 8) tap(s.target);
+  }
+  screen.addEventListener('pointerup', end);
+  screen.addEventListener('pointercancel', () => { clearTimeout(lpTimer); start = null; });
+
+  function tap(t) {
+    const el = t.closest('[data-app], [data-person], [data-call], [data-web], [data-act], [data-open]');
+    if (!el) return;
+    if (el.dataset.open) open(el.dataset.open);
+    else if (el.dataset.app) open(el.dataset.app);
+    else if (el.dataset.person) open('chat with ' + el.dataset.person);
+    else if (el.dataset.call) toast('Calling ' + el.dataset.call + ' …');
+    else if (el.dataset.web) toast('Opening web search …');
+    else if (el.dataset.act === 'stats') stats();
+  }
+  /* Tastatur: Enter/Leertaste auf Buttons im Telefon */
+  screen.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('button') && !e.target.closest('.alpha') && e.target.id !== 'homebar') {
+      e.preventDefault(); tap(e.target);
+    }
+    if (e.key === 'Escape') { if (screen.classList.contains('is-sheet')) closeSheet(); else goHome(); }
+  });
+  screen.addEventListener('click', e => { if (e.detail === 0 && e.target.matches('[data-app],[data-person]')) e.preventDefault(); });
+
+  alpha.addEventListener('click', e => {
+    const b = e.target.closest('[data-letter]'); if (!b) return;
+    const target = document.getElementById('L-' + b.dataset.letter);
+    if (target) list.scrollTo({ top: target.offsetTop - list.offsetTop, behavior: 'smooth' });
+  });
+  document.getElementById('homebar').addEventListener('click', goHome);
+
+  /* Einmalige Selbstvorführung: hochwischen, Tippfehler suchen, zurück */
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finger = document.getElementById('finger');
+  let demoTimers = [], demoDone = false;
+  function stopDemo() {
+    demoDone = true;
+    demoTimers.forEach(clearTimeout); demoTimers = [];
+    finger.classList.remove('on', 'up');
+  }
+  function runDemo() {
+    if (demoDone || reduced) return;
+    demoDone = true;
+    const at = (ms, fn) => demoTimers.push(setTimeout(fn, ms));
+    at(0, () => finger.classList.add('on'));
+    at(350, () => finger.classList.add('up'));
+    at(700, () => openDrawer(false));
+    at(1050, () => finger.classList.remove('on'));
+    at(1400, () => finger.classList.remove('up'));
+    const word = 'camrea';
+    for (let i = 1; i <= word.length; i++) at(1500 + i * 130, () => { q.value = word.slice(0, i); renderList(); });
+    at(3400, () => goHome());
+    at(3800, () => { demoTimers = []; });
+  }
+  screen.addEventListener('pointerdown', stopDemo, true);
+  screen.addEventListener('keydown', stopDemo, true);
+  q.addEventListener('focus', () => { if (demoTimers.length) stopDemo(); });
+  if ('IntersectionObserver' in window) {
+    let seen = false;
+    const io = new IntersectionObserver(es => {
+      if (!seen && es.some(e => e.isIntersecting)) { seen = true; io.disconnect(); setTimeout(runDemo, 1000); }
+    }, { threshold: .6 });
+    io.observe(screen);
+  } else setTimeout(runDemo, 1000);
+
+  /* Punkte und Balken beim ersten Hineinscrollen abspielen */
+  if ('IntersectionObserver' in window && !reduced) {
+    const io2 = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('play'); io2.unobserve(e.target); }
+    }), { threshold: .5 });
+    document.querySelectorAll('.people-demo, .st-chart').forEach(el => io2.observe(el));
+  }
+
+  /* Hinweis-Buttons unter dem Telefon */
+  document.querySelectorAll('.hint').forEach(b => b.addEventListener('click', () => {
+    stopDemo();
+    const a = b.dataset.act;
+    if (a === 'drawer') { goHome(); setTimeout(() => openDrawer(false), 40); }
+    if (a === 'search') {
+      openDrawer(false); q.value = '';
+      const word = 'camrea'; let i = 0;
+      const typer = setInterval(() => { q.value = word.slice(0, ++i); renderList(); if (i >= word.length) clearInterval(typer); }, 110);
+    }
+    if (a === 'menu') { goHome(); setTimeout(() => appMenu('Camera'), 60); }
+    if (a === 'quick') { goHome(); setTimeout(() => quick('left'), 60); }
+    if (a === 'stats') { goHome(); setTimeout(stats, 60); }
+  }));
+
+  /* ---------- Einhandbedienung: Alphabet-Leiste halten, nach innen wischen, gleiten ---------- */
+  (function () {
+    const sc = document.getElementById('screen2');
+    if (!sc) return;
+    const list2 = document.getElementById('list2');
+    const alpha2 = document.getElementById('alpha2');
+    const bubble = document.getElementById('bubble2');
+    const bTxt = document.getElementById('bubbleTxt');
+    const bSub = document.getElementById('bubbleSub');
+    const arrow = document.getElementById('arrow2');
+    const thumb = document.getElementById('thumb2');
+    const toast2 = document.getElementById('toast2');
+
+    const sorted = [...apps].sort((a, b) => a.localeCompare(b, 'en'));
+    const byL = {};
+    sorted.forEach(a => { const L = norm(a)[0].toUpperCase(); (byL[L] = byL[L] || []).push(a); });
+    const letters2 = Object.keys(byL);
+    list2.innerHTML = sorted.map(a => `<div class="it" data-l="${norm(a)[0].toUpperCase()}">${esc(a)}</div>`).join('');
+    alpha2.innerHTML = letters2.map(L => `<span data-l="${L}">${L}</span>`).join('');
+
+    const u = () => sc.clientWidth / 300;
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    let phase = 'idle', letter = null, holdT = null, holdRef = null, armRef = null, cur = { x: 0, y: 0 };
+    let anchorY = 0, idx = 0, step = 20;
+
+    function alphaBox() {
+      const r = alpha2.getBoundingClientRect(), s = sc.getBoundingClientRect();
+      return { top: r.top - s.top, h: r.height, cx: r.left - s.left + r.width / 2, bottom: r.bottom - s.top };
+    }
+    function letterAt(y) {
+      const b = alphaBox();
+      return letters2[clamp(Math.floor((y - b.top) / b.h * letters2.length), 0, letters2.length - 1)];
+    }
+    function yOf(L) { const b = alphaBox(); return b.top + (letters2.indexOf(L) + .5) * b.h / letters2.length; }
+    function clearHit() { list2.querySelectorAll('.hit').forEach(el => el.classList.remove('hit')); }
+    function scrollTo(L, i) {
+      const items = list2.querySelectorAll(`[data-l="${L}"]`);
+      const el = items[i] || items[0];
+      if (el) list2.scrollTop = el.offsetTop - list2.clientHeight * .25;
+      return el;
+    }
+    function showLetter(L) {
+      bubble.classList.add('on'); bubble.classList.remove('app');
+      bTxt.textContent = L; bSub.textContent = '';
+      alpha2.querySelectorAll('span').forEach(s => s.classList.toggle('cur', s.dataset.l === L));
+      clearHit(); scrollTo(L, 0);
+    }
+    function setThumb(p, on) { thumb.style.left = p.x + 'px'; thumb.style.top = p.y + 'px'; thumb.classList.toggle('on', on); }
+    function showArrow(p, txt) {
+      arrow.textContent = txt; arrow.style.left = p.x + 'px'; arrow.style.top = (p.y - 22 * u()) + 'px';
+      arrow.classList.add('on');
+    }
+    function setArmed(on) { alpha2.classList.toggle('armed', on); bubble.classList.toggle('armed', on); if (!on) arrow.classList.remove('on'); }
+    function startHold(p) {
+      clearTimeout(holdT); holdRef = p;
+      holdT = setTimeout(() => {
+        if (phase !== 'letter') return;
+        phase = 'armed'; armRef = { ...cur }; setArmed(true); showArrow(cur, '←');
+      }, 160);
+    }
+    function selectIdx(i) {
+      idx = i;
+      const a = byL[letter][i];
+      bubble.classList.add('app'); bTxt.textContent = a; bSub.textContent = 'Release to open';
+      clearHit(); const el = scrollTo(letter, i); if (el) el.classList.add('hit');
+    }
+    function down(p) {
+      cur = p; phase = 'letter'; letter = letterAt(p.y); showLetter(letter); setThumb(p, true); startHold(p);
+    }
+    function move(p) {
+      cur = p; setThumb(p, true);
+      if (phase === 'letter') {
+        const L = letterAt(p.y);
+        if (L !== letter) { letter = L; showLetter(L); }
+        if (Math.hypot(p.x - holdRef.x, p.y - holdRef.y) > 6 * u()) startHold(p);
+      } else if (phase === 'armed') {
+        const inward = armRef.x - p.x, dy = Math.abs(p.y - armRef.y);
+        if (inward >= 24 * u()) {
+          phase = 'selecting'; anchorY = p.y;
+          const space = alphaBox().bottom - p.y;
+          step = clamp(space / byL[letter].length, 14 * u(), 28 * u());
+          selectIdx(0); showArrow(p, '↕');
+        } else if (dy > 24 * u() && dy > inward) {
+          phase = 'letter'; setArmed(false); letter = letterAt(p.y); showLetter(letter); startHold(p);
+        } else {
+          if (inward < 6 * u()) { const L = letterAt(p.y); if (L !== letter) { letter = L; showLetter(L); armRef = { ...p }; } }
+          showArrow(p, '←');
+        }
+      } else if (phase === 'selecting') {
+        const inward = armRef.x - p.x;
+        if (inward < 12 * u()) { phase = 'armed'; showLetter(letter); showArrow(p, '←'); return; }
+        if (p.y < anchorY) anchorY = p.y;
+        const i = clamp(Math.floor((p.y - anchorY) / step), 0, byL[letter].length - 1);
+        if (i !== idx) selectIdx(i);
+        showArrow(p, '↕');
+      }
+    }
+    let t2;
+    function toastIt(msg) { toast2.textContent = msg; toast2.classList.add('on'); clearTimeout(t2); t2 = setTimeout(() => toast2.classList.remove('on'), 1500); }
+    function up() {
+      clearTimeout(holdT);
+      const chosen = phase === 'selecting' ? byL[letter][idx] : null;
+      phase = 'idle'; setArmed(false); bubble.classList.remove('on', 'app');
+      alpha2.querySelectorAll('.cur').forEach(s => s.classList.remove('cur'));
+      setThumb(cur, false);
+      if (chosen) { toastIt('Opening ' + chosen + ' …'); setTimeout(clearHit, 900); } else clearHit();
+    }
+
+    const local = e => { const r = sc.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    alpha2.addEventListener('pointerdown', e => {
+      e.preventDefault(); stopDemo2();
+      try { alpha2.setPointerCapture(e.pointerId); } catch (_) {}
+      down(local(e));
+    });
+    alpha2.addEventListener('pointermove', e => { if (phase !== 'idle' && !demoRunning) move(local(e)); });
+    alpha2.addEventListener('pointerup', () => { if (!demoRunning) up(); });
+    alpha2.addEventListener('pointercancel', () => { if (!demoRunning) up(); });
+    list2.addEventListener('click', e => { const it = e.target.closest('.it'); if (it) toastIt('Opening ' + it.textContent + ' …'); });
+    sc.addEventListener('pointerdown', () => stopDemo2(), true);
+
+    /* Vorführung: K bis S scrubben, halten, nach innen, eine App weiter, loslassen */
+    let demoRunning = false, runId = 0;
+    const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    function wait(ms) { return new Promise(res => setTimeout(res, ms)); }
+    function glide(to, ms, id) {
+      const from = { ...cur }, t0 = performance.now();
+      return new Promise(res => {
+        (function f(now) {
+          if (id !== runId) return res();
+          const k = Math.min(1, (now - t0) / ms), e = ease(k);
+          move({ x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e });
+          k < 1 ? requestAnimationFrame(f) : res();
+        })(t0);
+      });
+    }
+    async function demo2() {
+      if (reduced) return;
+      stopDemo2();
+      const id = ++runId; demoRunning = true;
+      const live = () => id === runId;
+      const b = alphaBox();
+      cur = { x: b.cx, y: yOf('K') }; setThumb(cur, true);
+      await wait(350); if (!live()) return;
+      down({ ...cur });
+      await glide({ x: b.cx, y: yOf('S') }, 900, id); if (!live()) return;
+      await wait(550); if (!live()) return;
+      await glide({ x: b.cx - 44 * u(), y: cur.y - 2 }, 380, id); if (!live()) return;
+      await wait(450); if (!live()) return;
+      await glide({ x: cur.x - 4 * u(), y: anchorY + step * 1.4 }, 520, id); if (!live()) return;
+      await wait(650); if (!live()) return;
+      demoRunning = false; up();
+    }
+    function stopDemo2() {
+      if (!demoRunning) return;
+      runId++; demoRunning = false; phase = 'idle'; up();
+    }
+
+    document.getElementById('replay2').addEventListener('click', demo2);
+    if ('IntersectionObserver' in window) {
+      const io3 = new IntersectionObserver(es => {
+        if (es.some(e => e.isIntersecting)) { io3.disconnect(); setTimeout(demo2, 500); }
+      }, { threshold: .7 });
+      io3.observe(sc);
+    }
+  })();
+})();
+</script>
+</body>
+</html>

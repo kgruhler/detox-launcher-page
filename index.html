@@ -16,6 +16,9 @@ img { max-width: 100%; }
 [hidden] { display: none !important; }
 </style>
 <link rel="canonical" href="https://detox-launcher.com/">
+<link rel="alternate" hreflang="de" href="https://detox-launcher.com/">
+<link rel="alternate" hreflang="en" href="https://detox-launcher.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://detox-launcher.com/en/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#0b0f1e">
 <meta property="og:type" content="website">
@@ -75,6 +78,7 @@ p { margin: 0; }
 .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 22px; }
 .mark { font-weight: 300; font-size: var(--s-md); letter-spacing: .01em; text-decoration: none; }
 .mark b { font-weight: 800; }
+.top-nav { display: flex; align-items: center; gap: 18px; }
 .top-link { font-size: var(--s-sm); color: var(--muted); text-decoration: none; }
 .top-link:hover { color: var(--fg); }
 
@@ -350,7 +354,7 @@ footer { border-top: 1px solid var(--line); padding-block: 32px 48px; font-size:
 <div class="wrap">
   <header class="top">
     <a class="mark" href="#top" id="top"><b>Detox</b> Launcher</a>
-    <a class="top-link" href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher" target="_blank" rel="noopener">Google Play ↗</a>
+    <nav class="top-nav"><a class="top-link" href="en/" hreflang="en" lang="en">English</a><a class="top-link" href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher" target="_blank" rel="noopener">Google Play ↗</a></nav>
   </header>
 </div>
 
@@ -585,11 +589,12 @@ footer { border-top: 1px solid var(--line); padding-block: 32px 48px; font-size:
 
 <footer>
   <div class="wrap foot">
-    <span>© 2026 Kevin Paul, Ulm · Diese Seite setzt keine Cookies.</span>
+    <span>© 2026 Kevin Paul, Laupheim · Diese Seite setzt keine Cookies.</span>
     <nav>
       <a href="datenschutz.html">Datenschutz</a>
       <a href="impressum.html">Impressum</a>
       <a href="mailto:kevin.p4ul@gmail.com">Kontakt</a>
+      <a href="en/" hreflang="en" lang="en">English</a>
     </nav>
   </div>
 </footer>
