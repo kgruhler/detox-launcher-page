@@ -1,438 +1,1051 @@
 <!doctype html>
-<html>
+<html lang="de">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, viewport-fit=cover">
-	<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Detox Launcher</title>
+<meta name="description" content="Detox Launcher: ein ruhiger, minimaler Startbildschirm für Android. Keine Icons, keine Badges, keine Werbung. Mit Bildschirmzeit und smarter Suche.">
+<style>
+@font-face { font-family: "Roboto Flex"; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url(fonts/roboto-flex-latin.woff2) format("woff2"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url(fonts/roboto-latin.woff2) format("woff2"); }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<link rel="canonical" href="https://detox-launcher.com/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0b0f1e">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://detox-launcher.com/">
+<meta property="og:title" content="Detox Launcher: Weniger Handy. Mehr Leben.">
+<meta property="og:description" content="Ein ruhiger Startbildschirm für Android. Keine Icons, keine Badges, keine Werbung.">
+<meta property="og:image" content="https://detox-launcher.com/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="fonts/roboto-flex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Detox Launcher","operatingSystem":"Android 11+","applicationCategory":"LifestyleApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"url":"https://detox-launcher.com/","downloadUrl":"https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher"}</script>
+<style>
+/* Layout: eine ruhige Spalte, die wie der Launcher selbst arbeitet. Viel Dunkel, dünne Wörter, ein fettes Element pro Abschnitt. */
+:root {
+  --bg: #0b0f1e;
+  --bg-2: #121830;
+  --fg: #eef0f7;
+  --muted: #98a0b8;
+  --line: #242b46;
+  --dusk: #e3a576;
+  --glow: rgba(227, 165, 118, .16);
+  --btn-bg: #eef0f7;
+  --btn-fg: #0b0f1e;
+  --font: "Roboto Flex", Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --s-xs: 13px; --s-sm: 15px; --s-md: 17px; --s-lg: 22px; --s-xl: clamp(28px, 4vw, 40px); --s-xxl: clamp(42px, 7.4vw, 96px);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #eef0f5; --bg-2: #e2e5ee; --fg: #131729; --muted: #575e75; --line: #cfd3e0;
+    --dusk: #b4612f; --glow: rgba(180, 97, 47, .12); --btn-bg: #131729; --btn-fg: #eef0f5;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #eef0f5; --bg-2: #e2e5ee; --fg: #131729; --muted: #575e75; --line: #cfd3e0;
+  --dusk: #b4612f; --glow: rgba(180, 97, 47, .12); --btn-bg: #131729; --btn-fg: #eef0f5;
+  color-scheme: light;
+}
 
-	<!-- Page Title -->
-	<title>Detox Launcher</title>
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font);
+  font-size: var(--s-md); line-height: 1.55; font-weight: 350;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: inherit; }
+h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 200; letter-spacing: -.02em; line-height: 1.04; }
+p { margin: 0; }
+:focus-visible { outline: 2px solid var(--dusk); outline-offset: 3px; border-radius: 6px; }
 
-	<!-- Compressed Styles -->
-	<link href="css/slides.min.css" rel="stylesheet" type="text/css">
-  <link href="css/slides-bg.css" rel="stylesheet" type="text/css">
+/* Kopfzeile */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 22px; }
+.mark { font-weight: 300; font-size: var(--s-md); letter-spacing: .01em; text-decoration: none; }
+.mark b { font-weight: 800; }
+.top-link { font-size: var(--s-sm); color: var(--muted); text-decoration: none; }
+.top-link:hover { color: var(--fg); }
 
-	<!-- Custom Styles -->
-	<!-- <link href="css/custom.css" rel="stylesheet" type="text/css"> -->
+/* Hero */
+.hero { position: relative; }
+.hero::before {
+  content: ""; position: absolute; inset: 30% 0 -10% 0; pointer-events: none;
+  background: radial-gradient(60% 50% at 70% 60%, var(--glow), transparent 70%);
+}
+.hero-grid {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  gap: clamp(32px, 6vw, 80px); align-items: center; padding-block: clamp(24px, 6vw, 72px) clamp(48px, 7vw, 96px);
+}
+.hero h1 { font-size: var(--s-xxl); }
+.hero h1 b { font-weight: 800; display: block; letter-spacing: -.035em; }
+.lede { margin-top: 28px; max-width: 34ch; font-size: var(--s-lg); line-height: 1.45; color: var(--muted); font-weight: 300; }
+.lede strong { color: var(--fg); font-weight: 400; }
+.cta-row { margin-top: 36px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 12px; padding: 14px 24px 14px 20px;
+  background: var(--btn-bg); color: var(--btn-fg); border-radius: 999px; text-decoration: none;
+  font-weight: 600; font-size: var(--s-md); transition: transform .2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.facts { font-size: var(--s-xs); color: var(--muted); letter-spacing: .02em; }
 
-	<!-- jQuery 3.3.1 -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+/* Telefon */
+.stage { display: grid; justify-items: center; gap: 18px; }
+.try { font-size: var(--s-xs); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.phone {
+  --pw: min(300px, 76vw);
+  width: var(--pw); aspect-ratio: 9 / 19.2; max-width: 100%;
+  border-radius: calc(var(--pw) * .14); padding: 9px; background: #07080b;
+  box-shadow: 0 0 0 1px #2a2d36, 0 40px 80px -30px rgba(0,0,0,.6);
+  position: relative; user-select: none; -webkit-user-select: none;
+}
+.screen {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  border-radius: calc(var(--pw) * .125); color: #fff; touch-action: none; cursor: grab;
+  font-family: Roboto, "Roboto Flex", system-ui, sans-serif;
+  background: linear-gradient(180deg, #0a0f20 0%, #141b33 38%, #2a3150 56%, #6f5d70 70%, #c99073 79%, #d9a37b 82%);
+}
+.screen:active { cursor: grabbing; }
+.cam { position: absolute; top: 12px; left: 50%; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; background: #000; z-index: 9; }
+.stars { position: absolute; left: 0; top: 0; width: 1px; height: 1px; border-radius: 50%; }
+.mtn { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 34%; display: block; }
+.homebar { position: absolute; left: 50%; bottom: 7px; width: 34%; height: 4px; margin-left: -17%; border-radius: 4px; background: rgba(255,255,255,.85); z-index: 8; border: 0; padding: 0; cursor: pointer; }
 
-	<!-- Compressed Scripts -->
-	<script src="js/slides.min.js" type="text/javascript"></script>
+.view { position: absolute; inset: 0; transition: transform .38s cubic-bezier(.2,.8,.2,1), opacity .3s ease; }
+.home { display: flex; flex-direction: column; align-items: center; padding: 18% 8% 0; text-align: center; }
+.tapbtn { background: none; border: 0; color: inherit; font: inherit; padding: 0; cursor: pointer; border-radius: 4px; }
+.tapbtn:hover { background: rgba(255,255,255,.06); }
+.clock { font-weight: 700; font-size: calc(var(--pw) * .225); line-height: 1; letter-spacing: 0; }
+.date { margin-top: 6px; font-weight: 700; font-size: calc(var(--pw) * .047); }
+.info { margin-top: 4px; font-size: calc(var(--pw) * .042); opacity: .8; font-weight: 400; }
+.apps { margin-top: auto; margin-bottom: 30%; display: grid; gap: calc(var(--pw) * .018); justify-items: center; width: 100%; }
+.app {
+  background: none; border: 0; color: #fff; font: inherit; cursor: pointer; padding: 2px 10px;
+  font-weight: 200; font-size: calc(var(--pw) * .072); line-height: 1.25; text-shadow: 0 1px 6px rgba(0,0,0,.25);
+  display: inline-flex; align-items: center; gap: 6px; border-radius: 6px;
+}
+.app:hover { background: rgba(255,255,255,.06); }
+.dots { color: #f0b98c; font-size: .7em; letter-spacing: 1px; }
+.sep { width: 34%; height: 1px; background: rgba(255,255,255,.35); margin: 4px 0; }
 
-	<!-- Custom Scripts -->
-	<!-- <script src="js/custom.js" type="text/javascript"></script> -->
+.drawer { background: rgba(8, 11, 24, .96); transform: translateY(100%); display: flex; flex-direction: column; padding: 15% 0 0; }
+.screen.is-drawer .drawer { transform: translateY(0); }
+.screen.is-drawer .home { transform: translateY(-12%); opacity: 0; }
+.search { display: flex; align-items: center; gap: 10px; padding: 0 9% 10px; }
+.search svg { width: 18px; height: 18px; flex: none; opacity: .9; }
+.search input {
+  flex: 1; min-width: 0; background: none; border: 0; color: #fff; font: inherit;
+  font-size: calc(var(--pw) * .06); font-weight: 400; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,.18);
+}
+.search input::placeholder { color: rgba(255,255,255,.45); }
+.search input:focus { outline: none; border-bottom-color: rgba(255,255,255,.6); }
+.list-wrap { position: relative; flex: 1; min-height: 0; display: flex; }
+.list { flex: 1; overflow-y: auto; padding: 4px 9% 30px 16%; touch-action: pan-y; scrollbar-width: none; }
+.list::-webkit-scrollbar { display: none; }
+.list .app { justify-content: flex-start; font-size: calc(var(--pw) * .066); padding: 3px 8px; margin-left: -8px; text-align: left; }
+.list .app .min { font-size: .45em; opacity: .55; font-weight: 400; }
+.list .app.hit { background: rgba(255,255,255,.12); }
+.label { font-size: calc(var(--pw) * .04); opacity: .55; margin: 10px 0 2px; }
+.row-contact { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.row-contact svg, .web svg { width: 15px; height: 15px; flex: none; opacity: .9; }
+.web { margin-top: 10px; }
+.alpha { display: flex; flex-direction: column; justify-content: center; gap: 1px; padding-right: 6px; }
+.alpha button { background: none; border: 0; color: rgba(255,255,255,.55); font: inherit; font-size: calc(var(--pw) * .032); padding: 0 4px; cursor: pointer; line-height: 1.25; }
+.alpha button:hover { color: #fff; }
 
-	<!-- Fonts and Material Icons -->
-	<link rel="stylesheet" as="font" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,600,700|Material+Icons"/>
- 
+.sheet-scrim { position: absolute; inset: 0; background: rgba(0,0,0,.45); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 6; }
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 7; padding: 18px 8% 34px;
+  background: #121628; border-radius: 18px 18px 0 0; transform: translateY(105%);
+  transition: transform .32s cubic-bezier(.2,.8,.2,1);
+}
+.screen.is-sheet .sheet { transform: translateY(0); }
+.screen.is-sheet .sheet-scrim { opacity: 1; pointer-events: auto; }
+.sheet h4 { margin: 0 0 10px; font-weight: 300; font-size: calc(var(--pw) * .068); }
+.sheet .opt { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,.08); font-size: calc(var(--pw) * .046); font-weight: 300; }
+.sheet .opt small { opacity: .6; font-size: .85em; }
+.sheet .new { color: #f0b98c; }
+.bars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; align-items: end; height: 90px; margin: 12px 0 6px; }
+.bar { background: rgba(255,255,255,.85); border-radius: 3px 3px 1px 1px; }
+.bar.dim { background: rgba(255,255,255,.35); }
+.bar-l { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-size: calc(var(--pw) * .033); opacity: .65; text-align: center; }
+.big { font-weight: 300; font-size: calc(var(--pw) * .12); line-height: 1.05; }
+.sample { font-size: calc(var(--pw) * .03); opacity: .45; margin-top: 10px; }
+
+.toast {
+  position: absolute; left: 50%; bottom: 9%; transform: translate(-50%, 8px); z-index: 9;
+  background: rgba(20,24,42,.92); padding: 7px 14px; border-radius: 999px; white-space: nowrap;
+  font-size: calc(var(--pw) * .04); opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none;
+}
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* Fingerspur der Selbstvorführung */
+.finger {
+  position: absolute; left: 50%; top: 82%; width: 30px; height: 30px; margin: -15px 0 0 -15px; z-index: 10;
+  border-radius: 50%; background: rgba(255,255,255,.28); box-shadow: 0 0 0 1px rgba(255,255,255,.5), 0 0 18px rgba(255,255,255,.25);
+  opacity: 0; pointer-events: none; transition: opacity .25s ease, top .7s cubic-bezier(.3,.7,.2,1);
+}
+.finger.on { opacity: 1; }
+.finger.up { top: 40%; }
+
+/* Einmalige Animationen beim Hineinscrollen. Ruhezustand ist immer sichtbar. */
+@keyframes dot-in { 0% { opacity: 0; transform: scale(.2); } 60% { opacity: 1; transform: scale(1.5); } 100% { opacity: 1; transform: scale(1); } }
+.people-demo .d { display: inline-block; }
+.people-demo.play .d { animation: dot-in .6s cubic-bezier(.3,.7,.2,1) both; }
+.people-demo.play .d:nth-of-type(1) { animation-delay: .35s; }
+.people-demo.play .d.d2 { animation-delay: .9s; }
+.people-demo.play .d.d3 { animation-delay: 1.05s; }
+@keyframes bar-in { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.st-chart div { transform-origin: 50% 100%; }
+.st-chart.play div { animation: bar-in .6s cubic-bezier(.3,.7,.2,1) both; }
+
+/* Einhandbedienung (zweites Telefon) */
+.drawer2 { position: absolute; inset: 0; background: rgba(8, 11, 24, .96); display: flex; flex-direction: column; padding-top: 15%; }
+.search .ph { font-size: calc(var(--pw) * .06); color: rgba(255,255,255,.45); flex: 1; border-bottom: 1px solid rgba(255,255,255,.18); padding: 4px 0; }
+.list2 { position: relative; flex: 1; min-height: 0; overflow-y: auto; padding: 4px 18% 45% 16%; scrollbar-width: none; touch-action: pan-y; }
+.list2::-webkit-scrollbar { display: none; }
+.list2 .it { display: block; width: fit-content; margin-left: -8px; padding: 0 8px; border-radius: 6px; font-weight: 200; font-size: calc(var(--pw) * .066); line-height: 1.5; cursor: pointer; }
+.list2 .it.hit { background: rgba(255,255,255,.14); }
+.reach { position: absolute; right: 0; bottom: 0; width: 100%; height: auto; pointer-events: none; z-index: 5; }
+.alpha2 {
+  position: absolute; right: 2%; top: 30%; bottom: 9%; width: 14%; z-index: 7; touch-action: none; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+  font-size: calc(var(--pw) * .036); color: rgba(255,255,255,.55);
+}
+.alpha2 span { transition: transform .12s, color .12s; }
+.alpha2 span.cur { color: #fff; font-weight: 700; transform: scale(1.35); }
+.alpha2.armed span.cur { color: #f0b98c; }
+.bubble {
+  position: absolute; left: 50%; top: 40%; width: 46%; aspect-ratio: 1; z-index: 8; padding: 8px;
+  transform: translate(-50%, -50%) scale(.92); background: #1c2138; border-radius: 18px;
+  display: grid; place-content: center; justify-items: center; text-align: center;
+  opacity: 0; transition: opacity .15s, transform .15s, box-shadow .15s; pointer-events: none;
+}
+.bubble.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.bubble.armed { box-shadow: 0 0 0 1.5px rgba(240,185,140,.75); }
+.bubble b { font-weight: 300; font-size: calc(var(--pw) * .26); line-height: 1; }
+.bubble.app b { font-size: calc(var(--pw) * .074); line-height: 1.2; }
+.bubble small { font-size: calc(var(--pw) * .033); opacity: .6; margin-top: 6px; }
+.bubble small:empty { display: none; }
+.arrow2 {
+  position: absolute; z-index: 9; transform: translate(-50%, -100%); pointer-events: none;
+  font-size: calc(var(--pw) * .06); color: #f0b98c; opacity: 0; transition: opacity .15s;
+}
+.arrow2.on { opacity: 1; }
+.thumb {
+  position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; z-index: 10; border-radius: 50%;
+  background: rgba(255,255,255,.26); box-shadow: 0 0 0 1px rgba(255,255,255,.5), 0 0 18px rgba(255,255,255,.22);
+  opacity: 0; transition: opacity .2s; pointer-events: none;
+}
+.thumb.on { opacity: 1; }
+.steps { margin: 22px 0 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 12px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: baseline; color: var(--muted); }
+.steps li::before { content: counter(s); font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; }
+.steps strong { color: var(--fg); font-weight: 500; }
+.small-note { margin-top: 18px; font-size: var(--s-sm); color: var(--muted); }
+
+.hints { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 360px; }
+.hint {
+  font: inherit; font-size: var(--s-xs); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--line); border-radius: 999px; padding: 7px 13px; transition: border-color .2s;
+}
+.hint:hover { border-color: var(--muted); }
+
+/* Abschnitte */
+section { padding-block: clamp(64px, 10vw, 128px); }
+.rule { border-top: 1px solid var(--line); }
+.eyebrow { font-size: var(--s-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+
+.statement h2 { font-size: var(--s-xxl); }
+.statement h2 b { font-weight: 800; }
+.statement p { margin-top: 32px; max-width: 52ch; font-size: var(--s-lg); line-height: 1.5; color: var(--muted); font-weight: 300; }
+
+.feature { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 88px); align-items: center; }
+.feature + .feature { margin-top: clamp(72px, 10vw, 128px); }
+.feature h3 { font-size: var(--s-xl); font-weight: 250; }
+.feature h3 b { font-weight: 750; }
+.feature p { margin-top: 18px; max-width: 46ch; color: var(--muted); }
+.feature ul { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; color: var(--muted); font-size: var(--s-sm); }
+.feature li::before { content: "–"; margin-right: 10px; color: var(--fg); }
+.tag { display: inline-block; font-size: var(--s-xs); letter-spacing: .08em; text-transform: uppercase; color: var(--dusk); border: 1px solid currentColor; border-radius: 999px; padding: 2px 10px; margin-bottom: 16px; }
+
+.visual { background: var(--bg-2); border-radius: 22px; padding: clamp(24px, 4vw, 44px); min-width: 0; }
+.people-demo { display: grid; justify-items: center; gap: 6px; font-weight: 200; font-size: clamp(26px, 3.4vw, 36px); }
+.people-demo .d { color: var(--dusk); font-size: .6em; vertical-align: middle; margin-left: 6px; }
+.people-demo hr { width: 90px; border: 0; border-top: 1px solid var(--line); margin: 10px 0; }
+.people-demo .muted { color: var(--muted); }
+.people-note { margin-top: 22px; text-align: center; font-size: var(--s-xs); color: var(--muted); }
+
+.st-today { font-weight: 200; font-size: clamp(44px, 6vw, 68px); line-height: 1; }
+.st-sub { color: var(--muted); font-size: var(--s-sm); margin-top: 6px; }
+.st-chart { margin-top: 28px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; align-items: end; height: 150px; }
+.st-chart div { background: var(--fg); opacity: .22; border-radius: 4px 4px 2px 2px; }
+.st-chart div.now { opacity: 1; }
+.st-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 8px; text-align: center; font-size: var(--s-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
+.st-days .now { color: var(--fg); font-weight: 600; }
+.st-note { margin-top: 18px; font-size: var(--s-xs); color: var(--muted); }
+
+.shots-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.shot { margin: 0; display: grid; gap: 10px; }
+.shot img { width: 100%; height: auto; aspect-ratio: 420 / 935; object-fit: cover; border-radius: 18px; display: block; box-shadow: 0 0 0 1px var(--line); background: #0a0f20; }
+.shot figcaption { font-size: var(--s-xs); color: var(--muted); text-align: center; }
+
+.more { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 40px; margin-top: 48px; }
+.more h4 { margin: 0 0 6px; font-size: var(--s-md); font-weight: 600; }
+.more p { color: var(--muted); font-size: var(--s-sm); }
+.more-head h2 { font-size: var(--s-xl); font-weight: 250; }
+
+.strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(180px, 230px); gap: 18px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x mandatory; margin-top: 40px; }
+.strip .shot { scroll-snap-align: start; }
+
+.promise { text-align: left; }
+.promise-lines { display: grid; gap: 4px; font-size: var(--s-xxl); font-weight: 200; letter-spacing: -.03em; line-height: 1.02; }
+.promise-lines b { font-weight: 800; }
+.promise-grid { margin-top: 48px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 48px; max-width: 900px; }
+.promise-grid h4 { margin: 0 0 6px; font-size: var(--s-md); font-weight: 600; }
+.promise-grid p { color: var(--muted); font-size: var(--s-sm); }
+
+.final { text-align: center; }
+.final h2 { font-size: var(--s-xxl); }
+.final h2 b { font-weight: 800; }
+.final p { margin: 22px auto 0; max-width: 40ch; color: var(--muted); font-size: var(--s-lg); font-weight: 300; }
+.final .cta-row { justify-content: center; }
+
+footer { border-top: 1px solid var(--line); padding-block: 32px 48px; font-size: var(--s-xs); color: var(--muted); }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 32px; }
+.foot nav { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.foot a { text-decoration: none; }
+.foot a:hover { color: var(--fg); }
+
+@media (max-width: 860px) {
+  .hero-grid, .feature { grid-template-columns: minmax(0, 1fr); }
+  .feature .visual { order: 2; }
+  .more { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .more, .promise-grid { grid-template-columns: minmax(0, 1fr); }
+  .shots-pair { gap: 10px; }
+  .lede { font-size: var(--s-md); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+
 </head>
-<body class="slides horizontal simplifiedMobile animated">
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="#top" id="top"><b>Detox</b> Launcher</a>
+    <a class="top-link" href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher" target="_blank" rel="noopener">Google Play ↗</a>
+  </header>
+</div>
 
-<!-- <svg id="logoDetox" width="333.057" height="37.989" viewBox="0 0 333.057 37.989" xmlns="http://www.w3.org/2000/svg"><g id="svgGroup" stroke-linecap="round" fill-rule="evenodd" font-size="9pt" stroke="#000" stroke-width="1 mm" fill="#000" style="stroke:#ffffff;stroke-width:1 mm;fill:#ffffff"><path d="M 29.956 24.854 L 29.956 23.779 A 16.918 16.918 0 0 1 30.254 20.547 A 13.993 13.993 0 0 1 30.823 18.469 A 13.731 13.731 0 0 1 32.326 15.463 A 12.153 12.153 0 0 1 33.215 14.294 A 10.843 10.843 0 0 1 36.743 11.56 A 9.772 9.772 0 0 1 41.04 10.596 A 10.273 10.273 0 0 1 43.751 10.944 A 9.072 9.072 0 0 1 45.068 11.414 A 9.504 9.504 0 0 1 48.254 13.721 A 10.062 10.062 0 0 1 50.045 16.528 A 11.869 11.869 0 0 1 50.342 17.285 A 12.834 12.834 0 0 1 50.995 20.272 A 15.889 15.889 0 0 1 51.074 21.875 L 51.074 23.413 L 30.811 23.413 L 30.811 22.095 L 49.756 22.095 L 49.756 21.777 A 11.495 11.495 0 0 0 49.201 18.173 A 10.59 10.59 0 0 0 48.682 16.882 A 9.146 9.146 0 0 0 45.654 13.281 A 7.56 7.56 0 0 0 42.033 11.964 A 9.63 9.63 0 0 0 41.04 11.914 A 8.997 8.997 0 0 0 38.39 12.295 A 8.055 8.055 0 0 0 37.048 12.842 Q 35.254 13.77 33.96 15.393 A 11.581 11.581 0 0 0 32.215 18.474 A 13.501 13.501 0 0 0 31.97 19.165 Q 31.274 21.313 31.274 23.779 L 31.274 24.854 A 13.787 13.787 0 0 0 31.714 28.374 A 12.514 12.514 0 0 0 32.056 29.468 A 12.297 12.297 0 0 0 33.727 32.612 A 11.387 11.387 0 0 0 34.229 33.24 A 10.134 10.134 0 0 0 37.488 35.779 Q 39.355 36.694 41.528 36.694 A 12.022 12.022 0 0 0 44.762 36.269 A 10.941 10.941 0 0 0 45.764 35.938 Q 47.607 35.228 49.16 33.316 A 12.727 12.727 0 0 0 49.365 33.057 L 50.293 33.716 Q 49.414 34.961 48.181 35.925 A 9.137 9.137 0 0 1 46.098 37.138 A 10.884 10.884 0 0 1 45.3 37.439 A 10.345 10.345 0 0 1 43.415 37.868 A 14.063 14.063 0 0 1 41.528 37.988 Q 39.111 37.988 37.012 37.024 A 11.254 11.254 0 0 1 33.325 34.302 Q 31.738 32.544 30.847 30.139 A 14.366 14.366 0 0 1 30.027 26.436 A 17.417 17.417 0 0 1 29.956 24.854 Z M 293.994 24.854 L 293.994 23.779 A 16.918 16.918 0 0 1 294.292 20.547 A 13.993 13.993 0 0 1 294.861 18.469 A 13.731 13.731 0 0 1 296.364 15.463 A 12.153 12.153 0 0 1 297.253 14.294 A 10.843 10.843 0 0 1 300.781 11.56 A 9.772 9.772 0 0 1 305.078 10.596 A 10.273 10.273 0 0 1 307.789 10.944 A 9.072 9.072 0 0 1 309.106 11.414 A 9.504 9.504 0 0 1 312.292 13.721 A 10.062 10.062 0 0 1 314.083 16.528 A 11.869 11.869 0 0 1 314.38 17.285 A 12.834 12.834 0 0 1 315.033 20.272 A 15.889 15.889 0 0 1 315.112 21.875 L 315.112 23.413 L 294.849 23.413 L 294.849 22.095 L 313.794 22.095 L 313.794 21.777 A 11.495 11.495 0 0 0 313.239 18.173 A 10.59 10.59 0 0 0 312.72 16.882 A 9.146 9.146 0 0 0 309.692 13.281 A 7.56 7.56 0 0 0 306.071 11.964 A 9.63 9.63 0 0 0 305.078 11.914 A 8.997 8.997 0 0 0 302.428 12.295 A 8.055 8.055 0 0 0 301.086 12.842 Q 299.292 13.77 297.998 15.393 A 11.581 11.581 0 0 0 296.253 18.474 A 13.501 13.501 0 0 0 296.008 19.165 Q 295.313 21.313 295.313 23.779 L 295.313 24.854 A 13.787 13.787 0 0 0 295.752 28.374 A 12.514 12.514 0 0 0 296.094 29.468 A 12.297 12.297 0 0 0 297.766 32.612 A 11.387 11.387 0 0 0 298.267 33.24 A 10.134 10.134 0 0 0 301.526 35.779 Q 303.394 36.694 305.566 36.694 A 12.022 12.022 0 0 0 308.801 36.269 A 10.941 10.941 0 0 0 309.802 35.938 Q 311.645 35.228 313.198 33.316 A 12.727 12.727 0 0 0 313.403 33.057 L 314.331 33.716 Q 313.452 34.961 312.219 35.925 A 9.137 9.137 0 0 1 310.136 37.138 A 10.884 10.884 0 0 1 309.338 37.439 A 10.345 10.345 0 0 1 307.453 37.868 A 14.063 14.063 0 0 1 305.566 37.988 Q 303.149 37.988 301.05 37.024 A 11.254 11.254 0 0 1 297.363 34.302 Q 295.776 32.544 294.885 30.139 A 14.366 14.366 0 0 1 294.065 26.436 A 17.417 17.417 0 0 1 293.994 24.854 Z M 9.839 37.5 L 1.172 37.5 L 1.221 36.182 L 9.839 36.182 A 13.722 13.722 0 0 0 14.102 35.536 A 12.258 12.258 0 0 0 16.687 34.351 A 13.066 13.066 0 0 0 21.448 29.297 A 14.433 14.433 0 0 0 23.055 24.172 A 18.223 18.223 0 0 0 23.193 21.899 L 23.193 17.48 A 16.769 16.769 0 0 0 22.802 13.8 A 14.379 14.379 0 0 0 22.192 11.78 A 13.697 13.697 0 0 0 19.93 7.887 A 12.925 12.925 0 0 0 19.385 7.275 A 12.715 12.715 0 0 0 15.137 4.321 A 13.09 13.09 0 0 0 10.459 3.284 A 15.187 15.187 0 0 0 9.839 3.271 L 1.025 3.271 L 1.025 1.953 L 9.839 1.953 Q 12.988 1.953 15.662 3.076 Q 18.335 4.199 20.325 6.274 A 14.457 14.457 0 0 1 23.236 10.775 A 16.647 16.647 0 0 1 23.413 11.218 Q 24.512 14.087 24.512 17.554 L 24.512 21.899 A 19.005 19.005 0 0 1 24.124 25.805 A 15.906 15.906 0 0 1 23.413 28.235 A 14.902 14.902 0 0 1 21.153 32.233 A 13.845 13.845 0 0 1 20.325 33.179 A 13.788 13.788 0 0 1 15.662 36.377 A 14.57 14.57 0 0 1 10.811 37.473 A 17.069 17.069 0 0 1 9.839 37.5 Z M 260.767 29.492 L 262.085 29.492 A 9.485 9.485 0 0 1 261.68 31.892 A 7.611 7.611 0 0 1 260.596 34.082 A 8.822 8.822 0 0 1 257.056 36.987 A 11.053 11.053 0 0 1 252.936 37.973 A 12.996 12.996 0 0 1 252.295 37.988 A 11.653 11.653 0 0 1 249.726 37.716 A 9.449 9.449 0 0 1 247.717 37.024 A 9.44 9.44 0 0 1 244.324 34.302 A 11.794 11.794 0 0 1 242.688 31.452 A 14.432 14.432 0 0 1 242.224 30.127 Q 241.504 27.71 241.504 24.805 L 241.504 23.779 A 20.453 20.453 0 0 1 241.732 20.665 A 16.542 16.542 0 0 1 242.224 18.457 Q 242.944 16.04 244.324 14.282 A 9.499 9.499 0 0 1 247.693 11.56 A 9.547 9.547 0 0 1 250.551 10.71 A 12.209 12.209 0 0 1 252.246 10.596 A 11.078 11.078 0 0 1 256.232 11.307 A 10.554 10.554 0 0 1 256.995 11.633 Q 259.18 12.671 260.571 14.722 A 8.445 8.445 0 0 1 261.776 17.501 A 11.757 11.757 0 0 1 262.085 19.8 L 260.767 19.8 A 10.269 10.269 0 0 0 260.488 17.805 Q 260.154 16.454 259.436 15.417 A 7.599 7.599 0 0 0 256.323 12.793 A 9.612 9.612 0 0 0 252.246 11.914 A 10.766 10.766 0 0 0 250.186 12.102 A 8.005 8.005 0 0 0 248.047 12.83 A 8.083 8.083 0 0 0 245.105 15.381 A 11.085 11.085 0 0 0 243.68 18.186 A 13.209 13.209 0 0 0 243.384 19.165 Q 242.822 21.313 242.822 23.779 L 242.822 24.805 A 19.544 19.544 0 0 0 243.042 27.784 A 16.499 16.499 0 0 0 243.384 29.443 A 12.108 12.108 0 0 0 244.319 31.924 A 10.379 10.379 0 0 0 245.105 33.215 A 8.099 8.099 0 0 0 248.059 35.754 Q 249.854 36.67 252.295 36.67 Q 254.37 36.67 256.238 35.925 Q 258.105 35.181 259.363 33.594 A 6.204 6.204 0 0 0 260.462 31.391 Q 260.707 30.519 260.767 29.492 Z M 98.193 11.084 L 99.854 11.084 L 108.301 22.803 L 116.724 11.084 L 118.384 11.084 L 109.106 23.95 L 118.872 37.5 L 117.236 37.5 L 108.276 25.098 L 99.341 37.5 L 97.705 37.5 L 107.471 23.95 L 98.193 11.084 Z M 172.461 22.754 L 179.37 22.754 L 179.419 24.097 L 172.534 24.097 A 22.546 22.546 0 0 0 170.177 24.214 A 16.527 16.527 0 0 0 167.944 24.597 A 13.779 13.779 0 0 0 166.206 25.144 Q 165.324 25.491 164.598 25.941 A 8.525 8.525 0 0 0 164.502 26.001 Q 163.086 26.904 162.329 28.149 A 5.209 5.209 0 0 0 161.572 30.908 Q 161.572 32.495 162.439 33.813 A 5.978 5.978 0 0 0 164.379 35.656 A 7.257 7.257 0 0 0 164.844 35.913 A 7.157 7.157 0 0 0 167.12 36.61 A 9.203 9.203 0 0 0 168.384 36.694 A 14.406 14.406 0 0 0 170.97 36.473 A 10.997 10.997 0 0 0 173.315 35.779 A 10.17 10.17 0 0 0 176.953 33.203 A 11.154 11.154 0 0 0 179.017 29.831 A 12.939 12.939 0 0 0 179.224 29.272 L 179.81 30.493 A 10.489 10.489 0 0 1 178.909 32.44 A 12.538 12.538 0 0 1 178.43 33.191 A 10.325 10.325 0 0 1 176.735 35.085 A 12.191 12.191 0 0 1 176.099 35.608 Q 174.683 36.694 172.766 37.341 A 11.957 11.957 0 0 1 170.506 37.855 A 16.194 16.194 0 0 1 168.384 37.988 A 11.211 11.211 0 0 1 166.245 37.794 A 8.368 8.368 0 0 1 164.087 37.073 A 7.137 7.137 0 0 1 162.102 35.631 A 6.554 6.554 0 0 1 161.255 34.534 A 6.76 6.76 0 0 1 160.281 31.487 A 8.348 8.348 0 0 1 160.254 30.811 A 6.491 6.491 0 0 1 161.084 27.576 A 7.337 7.337 0 0 1 162.705 25.617 A 9.098 9.098 0 0 1 163.489 25.012 A 10.45 10.45 0 0 1 165.419 23.974 A 14.288 14.288 0 0 1 167.334 23.34 A 17.889 17.889 0 0 1 169.912 22.883 A 24.119 24.119 0 0 1 172.461 22.754 Z M 206.519 27.173 L 207.642 27.124 A 15.734 15.734 0 0 1 207.415 29.844 A 13.091 13.091 0 0 1 207.031 31.445 A 9.693 9.693 0 0 1 205.568 34.377 A 9.144 9.144 0 0 1 205.151 34.9 A 8.133 8.133 0 0 1 202.563 36.886 A 9.791 9.791 0 0 1 201.904 37.183 Q 199.927 37.988 197.192 37.988 A 11.784 11.784 0 0 1 195.072 37.805 A 9.686 9.686 0 0 1 193.665 37.439 Q 192.065 36.89 190.906 35.693 A 6.908 6.908 0 0 1 189.771 34.112 A 9.498 9.498 0 0 1 189.124 32.556 Q 188.599 30.922 188.517 28.709 A 22.78 22.78 0 0 1 188.501 27.856 L 188.501 11.084 L 189.819 11.084 L 189.819 27.905 Q 189.819 30.322 190.369 32.007 Q 190.906 33.654 191.863 34.671 A 5.265 5.265 0 0 0 191.907 34.717 A 5.862 5.862 0 0 0 194.226 36.206 Q 195.557 36.67 197.144 36.67 A 15.07 15.07 0 0 0 199.32 36.523 Q 200.447 36.358 201.37 36.008 A 6.894 6.894 0 0 0 202.759 35.303 A 7.472 7.472 0 0 0 205.664 31.75 A 12.458 12.458 0 0 0 206.519 27.173 Z M 217.065 22.021 L 216.357 20.63 A 12.595 12.595 0 0 1 217.432 16.882 Q 218.262 15.088 219.604 13.672 A 10.204 10.204 0 0 1 222.729 11.426 A 8.976 8.976 0 0 1 225.965 10.618 A 10.68 10.68 0 0 1 226.66 10.596 A 12.487 12.487 0 0 1 228.496 10.725 A 9.346 9.346 0 0 1 230.225 11.145 A 6.333 6.333 0 0 1 232.861 12.878 A 6.922 6.922 0 0 1 233.932 14.472 A 9.39 9.39 0 0 1 234.497 15.918 A 12.02 12.02 0 0 1 234.878 17.674 Q 235.059 18.917 235.059 20.41 L 235.059 37.5 L 233.74 37.5 L 233.74 20.41 Q 233.74 17.041 232.825 15.198 A 6.254 6.254 0 0 0 231.928 13.84 A 4.798 4.798 0 0 0 230.298 12.622 A 8.036 8.036 0 0 0 228.153 12.001 A 10.561 10.561 0 0 0 226.587 11.89 A 9.321 9.321 0 0 0 224.512 12.11 A 7.006 7.006 0 0 0 222.327 13 A 9.749 9.749 0 0 0 219.421 15.771 Q 218.286 17.432 217.712 19.141 Q 217.315 20.324 217.158 21.25 A 7.367 7.367 0 0 0 217.065 22.021 Z M 269.8 22.021 L 269.092 20.63 A 12.595 12.595 0 0 1 270.166 16.882 Q 270.996 15.088 272.339 13.672 A 10.204 10.204 0 0 1 275.464 11.426 A 8.976 8.976 0 0 1 278.699 10.618 A 10.68 10.68 0 0 1 279.395 10.596 A 12.487 12.487 0 0 1 281.231 10.725 A 9.346 9.346 0 0 1 282.959 11.145 A 6.333 6.333 0 0 1 285.596 12.878 A 6.922 6.922 0 0 1 286.666 14.472 A 9.39 9.39 0 0 1 287.231 15.918 A 12.02 12.02 0 0 1 287.613 17.674 Q 287.793 18.917 287.793 20.41 L 287.793 37.5 L 286.475 37.5 L 286.475 20.41 Q 286.475 17.041 285.559 15.198 A 6.254 6.254 0 0 0 284.663 13.84 A 4.798 4.798 0 0 0 283.032 12.622 A 8.036 8.036 0 0 0 280.887 12.001 A 10.561 10.561 0 0 0 279.321 11.89 A 9.321 9.321 0 0 0 277.246 12.11 A 7.006 7.006 0 0 0 275.061 13 A 9.749 9.749 0 0 0 272.156 15.771 Q 271.021 17.432 270.447 19.141 Q 270.05 20.324 269.892 21.25 A 7.367 7.367 0 0 0 269.8 22.021 Z M 178.784 32.544 L 178.784 18.896 A 8.59 8.59 0 0 0 178.604 17.095 A 6.349 6.349 0 0 0 177.844 15.137 A 5.96 5.96 0 0 0 175.492 12.934 A 7.356 7.356 0 0 0 175.11 12.744 Q 173.503 12.001 171.261 11.923 A 15.378 15.378 0 0 0 170.728 11.914 A 11.698 11.698 0 0 0 168.253 12.166 A 9.568 9.568 0 0 0 166.418 12.756 A 8.337 8.337 0 0 0 164.656 13.79 A 6.824 6.824 0 0 0 163.391 15.063 Q 162.28 16.528 162.28 18.359 L 160.962 18.311 A 6.289 6.289 0 0 1 161.682 15.381 A 7.739 7.739 0 0 1 163.391 13.189 A 9.019 9.019 0 0 1 163.708 12.915 A 9.488 9.488 0 0 1 165.838 11.604 A 11.499 11.499 0 0 1 166.809 11.218 A 11.324 11.324 0 0 1 169.559 10.645 A 13.606 13.606 0 0 1 170.728 10.596 A 13.941 13.941 0 0 1 173.248 10.813 A 10.572 10.572 0 0 1 175.598 11.523 A 7.354 7.354 0 0 1 178.906 14.307 Q 180.103 16.162 180.103 18.945 L 180.103 32.178 A 22.633 22.633 0 0 0 180.286 35.034 A 16.112 16.112 0 0 0 180.413 35.872 Q 180.558 36.67 180.757 37.205 A 4.375 4.375 0 0 0 180.786 37.28 L 180.786 37.5 L 179.272 37.5 A 10.997 10.997 0 0 1 179.094 36.66 Q 178.979 35.997 178.906 35.193 A 29.523 29.523 0 0 1 178.784 32.544 Z M 71.045 24.805 L 71.045 23.779 A 17.436 17.436 0 0 1 71.341 20.507 A 14.454 14.454 0 0 1 71.887 18.457 A 13.295 13.295 0 0 1 73.287 15.569 A 11.651 11.651 0 0 1 74.255 14.282 A 10.557 10.557 0 0 1 77.905 11.56 A 10.889 10.889 0 0 1 81.647 10.63 A 13.011 13.011 0 0 1 82.593 10.596 A 12.032 12.032 0 0 1 85.575 10.954 A 10.376 10.376 0 0 1 87.305 11.56 Q 89.429 12.524 90.967 14.282 Q 92.505 16.04 93.335 18.457 A 15.33 15.33 0 0 1 94.083 22 A 18.835 18.835 0 0 1 94.165 23.779 L 94.165 24.805 A 17.696 17.696 0 0 1 93.876 28.062 A 14.631 14.631 0 0 1 93.335 30.127 A 13.111 13.111 0 0 1 91.946 33.015 A 11.521 11.521 0 0 1 90.979 34.302 A 10.557 10.557 0 0 1 87.329 37.024 A 10.889 10.889 0 0 1 83.587 37.954 A 13.011 13.011 0 0 1 82.642 37.988 A 12.032 12.032 0 0 1 79.66 37.63 A 10.376 10.376 0 0 1 77.93 37.024 Q 75.806 36.06 74.268 34.302 A 12.174 12.174 0 0 1 72.228 31.01 A 14.379 14.379 0 0 1 71.887 30.127 Q 71.045 27.71 71.045 24.805 Z M 58.838 31.177 L 58.838 3.955 L 60.181 3.955 L 60.181 31.177 Q 60.181 33.496 60.73 34.68 A 4.166 4.166 0 0 0 61.151 35.402 Q 61.594 36.003 62.195 36.267 Q 63.11 36.67 64.16 36.67 A 16.123 16.123 0 0 0 64.79 36.658 Q 65.101 36.646 65.377 36.621 A 9.249 9.249 0 0 0 65.503 36.609 Q 66.089 36.548 66.772 36.45 L 66.992 37.695 A 4.065 4.065 0 0 1 66.565 37.804 Q 66.357 37.846 66.115 37.877 A 9.292 9.292 0 0 1 65.601 37.927 A 34.386 34.386 0 0 1 65.195 37.954 Q 64.731 37.982 64.391 37.987 A 9.934 9.934 0 0 1 64.233 37.988 A 7.949 7.949 0 0 1 62.874 37.878 Q 62.084 37.741 61.43 37.433 A 4.899 4.899 0 0 1 61.34 37.39 A 3.607 3.607 0 0 1 59.97 36.184 A 5.109 5.109 0 0 1 59.485 35.303 Q 58.851 33.844 58.838 31.284 A 21.213 21.213 0 0 1 58.838 31.177 Z M 268.701 0 L 270.02 0 L 270.02 37.5 L 268.701 37.5 L 268.701 0 Z M 137.085 1.953 L 138.428 1.953 L 138.428 37.5 L 137.085 37.5 L 137.085 1.953 Z M 0 1.953 L 1.318 1.953 L 1.318 37.5 L 0 37.5 L 0 1.953 Z M 72.363 23.779 L 72.363 24.805 A 14.461 14.461 0 0 0 73.048 29.276 A 13.646 13.646 0 0 0 73.059 29.309 A 12.144 12.144 0 0 0 74.792 32.737 A 11.466 11.466 0 0 0 75.073 33.105 A 9.478 9.478 0 0 0 78.296 35.718 Q 80.2 36.67 82.642 36.67 A 10.487 10.487 0 0 0 85.062 36.401 A 8.581 8.581 0 0 0 86.951 35.718 A 9.513 9.513 0 0 0 90.161 33.105 A 11.813 11.813 0 0 0 92.12 29.442 A 13.348 13.348 0 0 0 92.163 29.309 A 14.669 14.669 0 0 0 92.847 24.879 A 16.38 16.38 0 0 0 92.847 24.805 L 92.847 23.779 A 14.414 14.414 0 0 0 92.163 19.336 Q 91.479 17.212 90.149 15.54 A 9.805 9.805 0 0 0 86.914 12.891 Q 85.01 11.914 82.593 11.914 A 10.237 10.237 0 0 0 80.173 12.19 A 8.443 8.443 0 0 0 78.284 12.891 A 9.844 9.844 0 0 0 75.061 15.54 Q 73.73 17.212 73.047 19.336 A 14.414 14.414 0 0 0 72.363 23.779 Z M 206.299 37.5 L 206.299 31.396 L 206.299 11.084 L 207.642 11.084 L 207.642 37.5 L 206.299 37.5 Z M 217.285 11.084 L 217.285 16.724 L 217.285 37.5 L 215.967 37.5 L 215.967 11.084 L 217.285 11.084 Z M 322.583 11.084 L 322.583 15.674 L 322.583 37.5 L 321.265 37.5 L 321.265 11.084 L 322.583 11.084 Z M 137.573 36.182 L 156.665 36.182 L 156.665 37.5 L 137.573 37.5 L 137.573 36.182 Z M 333.057 10.864 L 332.91 12.036 A 75.551 75.551 0 0 0 332.304 11.963 A 86.15 86.15 0 0 0 332.092 11.938 A 7.71 7.71 0 0 0 331.345 11.891 A 8.653 8.653 0 0 0 331.201 11.89 A 9.252 9.252 0 0 0 329.178 12.102 A 7.241 7.241 0 0 0 327.307 12.793 A 8 8 0 0 0 324.524 15.283 A 11.058 11.058 0 0 0 323.131 18.053 A 13.078 13.078 0 0 0 322.864 18.933 A 16.543 16.543 0 0 0 322.341 22.328 A 19.246 19.246 0 0 0 322.314 23.34 L 321.436 23.413 A 22.752 22.752 0 0 1 321.625 20.421 A 18.431 18.431 0 0 1 322.034 18.286 A 13.568 13.568 0 0 1 322.885 15.878 A 10.997 10.997 0 0 1 323.84 14.221 Q 325.049 12.5 326.892 11.548 A 8.402 8.402 0 0 1 329.439 10.73 A 11.15 11.15 0 0 1 331.201 10.596 Q 331.812 10.596 332.275 10.669 A 5.246 5.246 0 0 1 332.603 10.731 Q 332.858 10.788 333.057 10.864 Z M 53.955 11.084 L 66.187 11.084 L 66.187 12.427 L 53.955 12.427 L 53.955 11.084 Z" vector-effect="non-scaling-stroke"/></g></svg> -->
-<!-- SVG Library -->
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
-  
-  <!-- <symbol id="logo" viewBox="0 0 333 38"><title>Slides Framework</title><path d="M 29.956 24.854 L 29.956 23.779 A 16.918 16.918 0 0 1 30.254 20.547 A 13.993 13.993 0 0 1 30.823 18.469 A 13.731 13.731 0 0 1 32.326 15.463 A 12.153 12.153 0 0 1 33.215 14.294 A 10.843 10.843 0 0 1 36.743 11.56 A 9.772 9.772 0 0 1 41.04 10.596 A 10.273 10.273 0 0 1 43.751 10.944 A 9.072 9.072 0 0 1 45.068 11.414 A 9.504 9.504 0 0 1 48.254 13.721 A 10.062 10.062 0 0 1 50.045 16.528 A 11.869 11.869 0 0 1 50.342 17.285 A 12.834 12.834 0 0 1 50.995 20.272 A 15.889 15.889 0 0 1 51.074 21.875 L 51.074 23.413 L 30.811 23.413 L 30.811 22.095 L 49.756 22.095 L 49.756 21.777 A 11.495 11.495 0 0 0 49.201 18.173 A 10.59 10.59 0 0 0 48.682 16.882 A 9.146 9.146 0 0 0 45.654 13.281 A 7.56 7.56 0 0 0 42.033 11.964 A 9.63 9.63 0 0 0 41.04 11.914 A 8.997 8.997 0 0 0 38.39 12.295 A 8.055 8.055 0 0 0 37.048 12.842 Q 35.254 13.77 33.96 15.393 A 11.581 11.581 0 0 0 32.215 18.474 A 13.501 13.501 0 0 0 31.97 19.165 Q 31.274 21.313 31.274 23.779 L 31.274 24.854 A 13.787 13.787 0 0 0 31.714 28.374 A 12.514 12.514 0 0 0 32.056 29.468 A 12.297 12.297 0 0 0 33.727 32.612 A 11.387 11.387 0 0 0 34.229 33.24 A 10.134 10.134 0 0 0 37.488 35.779 Q 39.355 36.694 41.528 36.694 A 12.022 12.022 0 0 0 44.762 36.269 A 10.941 10.941 0 0 0 45.764 35.938 Q 47.607 35.228 49.16 33.316 A 12.727 12.727 0 0 0 49.365 33.057 L 50.293 33.716 Q 49.414 34.961 48.181 35.925 A 9.137 9.137 0 0 1 46.098 37.138 A 10.884 10.884 0 0 1 45.3 37.439 A 10.345 10.345 0 0 1 43.415 37.868 A 14.063 14.063 0 0 1 41.528 37.988 Q 39.111 37.988 37.012 37.024 A 11.254 11.254 0 0 1 33.325 34.302 Q 31.738 32.544 30.847 30.139 A 14.366 14.366 0 0 1 30.027 26.436 A 17.417 17.417 0 0 1 29.956 24.854 Z M 293.994 24.854 L 293.994 23.779 A 16.918 16.918 0 0 1 294.292 20.547 A 13.993 13.993 0 0 1 294.861 18.469 A 13.731 13.731 0 0 1 296.364 15.463 A 12.153 12.153 0 0 1 297.253 14.294 A 10.843 10.843 0 0 1 300.781 11.56 A 9.772 9.772 0 0 1 305.078 10.596 A 10.273 10.273 0 0 1 307.789 10.944 A 9.072 9.072 0 0 1 309.106 11.414 A 9.504 9.504 0 0 1 312.292 13.721 A 10.062 10.062 0 0 1 314.083 16.528 A 11.869 11.869 0 0 1 314.38 17.285 A 12.834 12.834 0 0 1 315.033 20.272 A 15.889 15.889 0 0 1 315.112 21.875 L 315.112 23.413 L 294.849 23.413 L 294.849 22.095 L 313.794 22.095 L 313.794 21.777 A 11.495 11.495 0 0 0 313.239 18.173 A 10.59 10.59 0 0 0 312.72 16.882 A 9.146 9.146 0 0 0 309.692 13.281 A 7.56 7.56 0 0 0 306.071 11.964 A 9.63 9.63 0 0 0 305.078 11.914 A 8.997 8.997 0 0 0 302.428 12.295 A 8.055 8.055 0 0 0 301.086 12.842 Q 299.292 13.77 297.998 15.393 A 11.581 11.581 0 0 0 296.253 18.474 A 13.501 13.501 0 0 0 296.008 19.165 Q 295.313 21.313 295.313 23.779 L 295.313 24.854 A 13.787 13.787 0 0 0 295.752 28.374 A 12.514 12.514 0 0 0 296.094 29.468 A 12.297 12.297 0 0 0 297.766 32.612 A 11.387 11.387 0 0 0 298.267 33.24 A 10.134 10.134 0 0 0 301.526 35.779 Q 303.394 36.694 305.566 36.694 A 12.022 12.022 0 0 0 308.801 36.269 A 10.941 10.941 0 0 0 309.802 35.938 Q 311.645 35.228 313.198 33.316 A 12.727 12.727 0 0 0 313.403 33.057 L 314.331 33.716 Q 313.452 34.961 312.219 35.925 A 9.137 9.137 0 0 1 310.136 37.138 A 10.884 10.884 0 0 1 309.338 37.439 A 10.345 10.345 0 0 1 307.453 37.868 A 14.063 14.063 0 0 1 305.566 37.988 Q 303.149 37.988 301.05 37.024 A 11.254 11.254 0 0 1 297.363 34.302 Q 295.776 32.544 294.885 30.139 A 14.366 14.366 0 0 1 294.065 26.436 A 17.417 17.417 0 0 1 293.994 24.854 Z M 9.839 37.5 L 1.172 37.5 L 1.221 36.182 L 9.839 36.182 A 13.722 13.722 0 0 0 14.102 35.536 A 12.258 12.258 0 0 0 16.687 34.351 A 13.066 13.066 0 0 0 21.448 29.297 A 14.433 14.433 0 0 0 23.055 24.172 A 18.223 18.223 0 0 0 23.193 21.899 L 23.193 17.48 A 16.769 16.769 0 0 0 22.802 13.8 A 14.379 14.379 0 0 0 22.192 11.78 A 13.697 13.697 0 0 0 19.93 7.887 A 12.925 12.925 0 0 0 19.385 7.275 A 12.715 12.715 0 0 0 15.137 4.321 A 13.09 13.09 0 0 0 10.459 3.284 A 15.187 15.187 0 0 0 9.839 3.271 L 1.025 3.271 L 1.025 1.953 L 9.839 1.953 Q 12.988 1.953 15.662 3.076 Q 18.335 4.199 20.325 6.274 A 14.457 14.457 0 0 1 23.236 10.775 A 16.647 16.647 0 0 1 23.413 11.218 Q 24.512 14.087 24.512 17.554 L 24.512 21.899 A 19.005 19.005 0 0 1 24.124 25.805 A 15.906 15.906 0 0 1 23.413 28.235 A 14.902 14.902 0 0 1 21.153 32.233 A 13.845 13.845 0 0 1 20.325 33.179 A 13.788 13.788 0 0 1 15.662 36.377 A 14.57 14.57 0 0 1 10.811 37.473 A 17.069 17.069 0 0 1 9.839 37.5 Z M 260.767 29.492 L 262.085 29.492 A 9.485 9.485 0 0 1 261.68 31.892 A 7.611 7.611 0 0 1 260.596 34.082 A 8.822 8.822 0 0 1 257.056 36.987 A 11.053 11.053 0 0 1 252.936 37.973 A 12.996 12.996 0 0 1 252.295 37.988 A 11.653 11.653 0 0 1 249.726 37.716 A 9.449 9.449 0 0 1 247.717 37.024 A 9.44 9.44 0 0 1 244.324 34.302 A 11.794 11.794 0 0 1 242.688 31.452 A 14.432 14.432 0 0 1 242.224 30.127 Q 241.504 27.71 241.504 24.805 L 241.504 23.779 A 20.453 20.453 0 0 1 241.732 20.665 A 16.542 16.542 0 0 1 242.224 18.457 Q 242.944 16.04 244.324 14.282 A 9.499 9.499 0 0 1 247.693 11.56 A 9.547 9.547 0 0 1 250.551 10.71 A 12.209 12.209 0 0 1 252.246 10.596 A 11.078 11.078 0 0 1 256.232 11.307 A 10.554 10.554 0 0 1 256.995 11.633 Q 259.18 12.671 260.571 14.722 A 8.445 8.445 0 0 1 261.776 17.501 A 11.757 11.757 0 0 1 262.085 19.8 L 260.767 19.8 A 10.269 10.269 0 0 0 260.488 17.805 Q 260.154 16.454 259.436 15.417 A 7.599 7.599 0 0 0 256.323 12.793 A 9.612 9.612 0 0 0 252.246 11.914 A 10.766 10.766 0 0 0 250.186 12.102 A 8.005 8.005 0 0 0 248.047 12.83 A 8.083 8.083 0 0 0 245.105 15.381 A 11.085 11.085 0 0 0 243.68 18.186 A 13.209 13.209 0 0 0 243.384 19.165 Q 242.822 21.313 242.822 23.779 L 242.822 24.805 A 19.544 19.544 0 0 0 243.042 27.784 A 16.499 16.499 0 0 0 243.384 29.443 A 12.108 12.108 0 0 0 244.319 31.924 A 10.379 10.379 0 0 0 245.105 33.215 A 8.099 8.099 0 0 0 248.059 35.754 Q 249.854 36.67 252.295 36.67 Q 254.37 36.67 256.238 35.925 Q 258.105 35.181 259.363 33.594 A 6.204 6.204 0 0 0 260.462 31.391 Q 260.707 30.519 260.767 29.492 Z M 98.193 11.084 L 99.854 11.084 L 108.301 22.803 L 116.724 11.084 L 118.384 11.084 L 109.106 23.95 L 118.872 37.5 L 117.236 37.5 L 108.276 25.098 L 99.341 37.5 L 97.705 37.5 L 107.471 23.95 L 98.193 11.084 Z M 172.461 22.754 L 179.37 22.754 L 179.419 24.097 L 172.534 24.097 A 22.546 22.546 0 0 0 170.177 24.214 A 16.527 16.527 0 0 0 167.944 24.597 A 13.779 13.779 0 0 0 166.206 25.144 Q 165.324 25.491 164.598 25.941 A 8.525 8.525 0 0 0 164.502 26.001 Q 163.086 26.904 162.329 28.149 A 5.209 5.209 0 0 0 161.572 30.908 Q 161.572 32.495 162.439 33.813 A 5.978 5.978 0 0 0 164.379 35.656 A 7.257 7.257 0 0 0 164.844 35.913 A 7.157 7.157 0 0 0 167.12 36.61 A 9.203 9.203 0 0 0 168.384 36.694 A 14.406 14.406 0 0 0 170.97 36.473 A 10.997 10.997 0 0 0 173.315 35.779 A 10.17 10.17 0 0 0 176.953 33.203 A 11.154 11.154 0 0 0 179.017 29.831 A 12.939 12.939 0 0 0 179.224 29.272 L 179.81 30.493 A 10.489 10.489 0 0 1 178.909 32.44 A 12.538 12.538 0 0 1 178.43 33.191 A 10.325 10.325 0 0 1 176.735 35.085 A 12.191 12.191 0 0 1 176.099 35.608 Q 174.683 36.694 172.766 37.341 A 11.957 11.957 0 0 1 170.506 37.855 A 16.194 16.194 0 0 1 168.384 37.988 A 11.211 11.211 0 0 1 166.245 37.794 A 8.368 8.368 0 0 1 164.087 37.073 A 7.137 7.137 0 0 1 162.102 35.631 A 6.554 6.554 0 0 1 161.255 34.534 A 6.76 6.76 0 0 1 160.281 31.487 A 8.348 8.348 0 0 1 160.254 30.811 A 6.491 6.491 0 0 1 161.084 27.576 A 7.337 7.337 0 0 1 162.705 25.617 A 9.098 9.098 0 0 1 163.489 25.012 A 10.45 10.45 0 0 1 165.419 23.974 A 14.288 14.288 0 0 1 167.334 23.34 A 17.889 17.889 0 0 1 169.912 22.883 A 24.119 24.119 0 0 1 172.461 22.754 Z M 206.519 27.173 L 207.642 27.124 A 15.734 15.734 0 0 1 207.415 29.844 A 13.091 13.091 0 0 1 207.031 31.445 A 9.693 9.693 0 0 1 205.568 34.377 A 9.144 9.144 0 0 1 205.151 34.9 A 8.133 8.133 0 0 1 202.563 36.886 A 9.791 9.791 0 0 1 201.904 37.183 Q 199.927 37.988 197.192 37.988 A 11.784 11.784 0 0 1 195.072 37.805 A 9.686 9.686 0 0 1 193.665 37.439 Q 192.065 36.89 190.906 35.693 A 6.908 6.908 0 0 1 189.771 34.112 A 9.498 9.498 0 0 1 189.124 32.556 Q 188.599 30.922 188.517 28.709 A 22.78 22.78 0 0 1 188.501 27.856 L 188.501 11.084 L 189.819 11.084 L 189.819 27.905 Q 189.819 30.322 190.369 32.007 Q 190.906 33.654 191.863 34.671 A 5.265 5.265 0 0 0 191.907 34.717 A 5.862 5.862 0 0 0 194.226 36.206 Q 195.557 36.67 197.144 36.67 A 15.07 15.07 0 0 0 199.32 36.523 Q 200.447 36.358 201.37 36.008 A 6.894 6.894 0 0 0 202.759 35.303 A 7.472 7.472 0 0 0 205.664 31.75 A 12.458 12.458 0 0 0 206.519 27.173 Z M 217.065 22.021 L 216.357 20.63 A 12.595 12.595 0 0 1 217.432 16.882 Q 218.262 15.088 219.604 13.672 A 10.204 10.204 0 0 1 222.729 11.426 A 8.976 8.976 0 0 1 225.965 10.618 A 10.68 10.68 0 0 1 226.66 10.596 A 12.487 12.487 0 0 1 228.496 10.725 A 9.346 9.346 0 0 1 230.225 11.145 A 6.333 6.333 0 0 1 232.861 12.878 A 6.922 6.922 0 0 1 233.932 14.472 A 9.39 9.39 0 0 1 234.497 15.918 A 12.02 12.02 0 0 1 234.878 17.674 Q 235.059 18.917 235.059 20.41 L 235.059 37.5 L 233.74 37.5 L 233.74 20.41 Q 233.74 17.041 232.825 15.198 A 6.254 6.254 0 0 0 231.928 13.84 A 4.798 4.798 0 0 0 230.298 12.622 A 8.036 8.036 0 0 0 228.153 12.001 A 10.561 10.561 0 0 0 226.587 11.89 A 9.321 9.321 0 0 0 224.512 12.11 A 7.006 7.006 0 0 0 222.327 13 A 9.749 9.749 0 0 0 219.421 15.771 Q 218.286 17.432 217.712 19.141 Q 217.315 20.324 217.158 21.25 A 7.367 7.367 0 0 0 217.065 22.021 Z M 269.8 22.021 L 269.092 20.63 A 12.595 12.595 0 0 1 270.166 16.882 Q 270.996 15.088 272.339 13.672 A 10.204 10.204 0 0 1 275.464 11.426 A 8.976 8.976 0 0 1 278.699 10.618 A 10.68 10.68 0 0 1 279.395 10.596 A 12.487 12.487 0 0 1 281.231 10.725 A 9.346 9.346 0 0 1 282.959 11.145 A 6.333 6.333 0 0 1 285.596 12.878 A 6.922 6.922 0 0 1 286.666 14.472 A 9.39 9.39 0 0 1 287.231 15.918 A 12.02 12.02 0 0 1 287.613 17.674 Q 287.793 18.917 287.793 20.41 L 287.793 37.5 L 286.475 37.5 L 286.475 20.41 Q 286.475 17.041 285.559 15.198 A 6.254 6.254 0 0 0 284.663 13.84 A 4.798 4.798 0 0 0 283.032 12.622 A 8.036 8.036 0 0 0 280.887 12.001 A 10.561 10.561 0 0 0 279.321 11.89 A 9.321 9.321 0 0 0 277.246 12.11 A 7.006 7.006 0 0 0 275.061 13 A 9.749 9.749 0 0 0 272.156 15.771 Q 271.021 17.432 270.447 19.141 Q 270.05 20.324 269.892 21.25 A 7.367 7.367 0 0 0 269.8 22.021 Z M 178.784 32.544 L 178.784 18.896 A 8.59 8.59 0 0 0 178.604 17.095 A 6.349 6.349 0 0 0 177.844 15.137 A 5.96 5.96 0 0 0 175.492 12.934 A 7.356 7.356 0 0 0 175.11 12.744 Q 173.503 12.001 171.261 11.923 A 15.378 15.378 0 0 0 170.728 11.914 A 11.698 11.698 0 0 0 168.253 12.166 A 9.568 9.568 0 0 0 166.418 12.756 A 8.337 8.337 0 0 0 164.656 13.79 A 6.824 6.824 0 0 0 163.391 15.063 Q 162.28 16.528 162.28 18.359 L 160.962 18.311 A 6.289 6.289 0 0 1 161.682 15.381 A 7.739 7.739 0 0 1 163.391 13.189 A 9.019 9.019 0 0 1 163.708 12.915 A 9.488 9.488 0 0 1 165.838 11.604 A 11.499 11.499 0 0 1 166.809 11.218 A 11.324 11.324 0 0 1 169.559 10.645 A 13.606 13.606 0 0 1 170.728 10.596 A 13.941 13.941 0 0 1 173.248 10.813 A 10.572 10.572 0 0 1 175.598 11.523 A 7.354 7.354 0 0 1 178.906 14.307 Q 180.103 16.162 180.103 18.945 L 180.103 32.178 A 22.633 22.633 0 0 0 180.286 35.034 A 16.112 16.112 0 0 0 180.413 35.872 Q 180.558 36.67 180.757 37.205 A 4.375 4.375 0 0 0 180.786 37.28 L 180.786 37.5 L 179.272 37.5 A 10.997 10.997 0 0 1 179.094 36.66 Q 178.979 35.997 178.906 35.193 A 29.523 29.523 0 0 1 178.784 32.544 Z M 71.045 24.805 L 71.045 23.779 A 17.436 17.436 0 0 1 71.341 20.507 A 14.454 14.454 0 0 1 71.887 18.457 A 13.295 13.295 0 0 1 73.287 15.569 A 11.651 11.651 0 0 1 74.255 14.282 A 10.557 10.557 0 0 1 77.905 11.56 A 10.889 10.889 0 0 1 81.647 10.63 A 13.011 13.011 0 0 1 82.593 10.596 A 12.032 12.032 0 0 1 85.575 10.954 A 10.376 10.376 0 0 1 87.305 11.56 Q 89.429 12.524 90.967 14.282 Q 92.505 16.04 93.335 18.457 A 15.33 15.33 0 0 1 94.083 22 A 18.835 18.835 0 0 1 94.165 23.779 L 94.165 24.805 A 17.696 17.696 0 0 1 93.876 28.062 A 14.631 14.631 0 0 1 93.335 30.127 A 13.111 13.111 0 0 1 91.946 33.015 A 11.521 11.521 0 0 1 90.979 34.302 A 10.557 10.557 0 0 1 87.329 37.024 A 10.889 10.889 0 0 1 83.587 37.954 A 13.011 13.011 0 0 1 82.642 37.988 A 12.032 12.032 0 0 1 79.66 37.63 A 10.376 10.376 0 0 1 77.93 37.024 Q 75.806 36.06 74.268 34.302 A 12.174 12.174 0 0 1 72.228 31.01 A 14.379 14.379 0 0 1 71.887 30.127 Q 71.045 27.71 71.045 24.805 Z M 58.838 31.177 L 58.838 3.955 L 60.181 3.955 L 60.181 31.177 Q 60.181 33.496 60.73 34.68 A 4.166 4.166 0 0 0 61.151 35.402 Q 61.594 36.003 62.195 36.267 Q 63.11 36.67 64.16 36.67 A 16.123 16.123 0 0 0 64.79 36.658 Q 65.101 36.646 65.377 36.621 A 9.249 9.249 0 0 0 65.503 36.609 Q 66.089 36.548 66.772 36.45 L 66.992 37.695 A 4.065 4.065 0 0 1 66.565 37.804 Q 66.357 37.846 66.115 37.877 A 9.292 9.292 0 0 1 65.601 37.927 A 34.386 34.386 0 0 1 65.195 37.954 Q 64.731 37.982 64.391 37.987 A 9.934 9.934 0 0 1 64.233 37.988 A 7.949 7.949 0 0 1 62.874 37.878 Q 62.084 37.741 61.43 37.433 A 4.899 4.899 0 0 1 61.34 37.39 A 3.607 3.607 0 0 1 59.97 36.184 A 5.109 5.109 0 0 1 59.485 35.303 Q 58.851 33.844 58.838 31.284 A 21.213 21.213 0 0 1 58.838 31.177 Z M 268.701 0 L 270.02 0 L 270.02 37.5 L 268.701 37.5 L 268.701 0 Z M 137.085 1.953 L 138.428 1.953 L 138.428 37.5 L 137.085 37.5 L 137.085 1.953 Z M 0 1.953 L 1.318 1.953 L 1.318 37.5 L 0 37.5 L 0 1.953 Z M 72.363 23.779 L 72.363 24.805 A 14.461 14.461 0 0 0 73.048 29.276 A 13.646 13.646 0 0 0 73.059 29.309 A 12.144 12.144 0 0 0 74.792 32.737 A 11.466 11.466 0 0 0 75.073 33.105 A 9.478 9.478 0 0 0 78.296 35.718 Q 80.2 36.67 82.642 36.67 A 10.487 10.487 0 0 0 85.062 36.401 A 8.581 8.581 0 0 0 86.951 35.718 A 9.513 9.513 0 0 0 90.161 33.105 A 11.813 11.813 0 0 0 92.12 29.442 A 13.348 13.348 0 0 0 92.163 29.309 A 14.669 14.669 0 0 0 92.847 24.879 A 16.38 16.38 0 0 0 92.847 24.805 L 92.847 23.779 A 14.414 14.414 0 0 0 92.163 19.336 Q 91.479 17.212 90.149 15.54 A 9.805 9.805 0 0 0 86.914 12.891 Q 85.01 11.914 82.593 11.914 A 10.237 10.237 0 0 0 80.173 12.19 A 8.443 8.443 0 0 0 78.284 12.891 A 9.844 9.844 0 0 0 75.061 15.54 Q 73.73 17.212 73.047 19.336 A 14.414 14.414 0 0 0 72.363 23.779 Z M 206.299 37.5 L 206.299 31.396 L 206.299 11.084 L 207.642 11.084 L 207.642 37.5 L 206.299 37.5 Z M 217.285 11.084 L 217.285 16.724 L 217.285 37.5 L 215.967 37.5 L 215.967 11.084 L 217.285 11.084 Z M 322.583 11.084 L 322.583 15.674 L 322.583 37.5 L 321.265 37.5 L 321.265 11.084 L 322.583 11.084 Z M 137.573 36.182 L 156.665 36.182 L 156.665 37.5 L 137.573 37.5 L 137.573 36.182 Z M 333.057 10.864 L 332.91 12.036 A 75.551 75.551 0 0 0 332.304 11.963 A 86.15 86.15 0 0 0 332.092 11.938 A 7.71 7.71 0 0 0 331.345 11.891 A 8.653 8.653 0 0 0 331.201 11.89 A 9.252 9.252 0 0 0 329.178 12.102 A 7.241 7.241 0 0 0 327.307 12.793 A 8 8 0 0 0 324.524 15.283 A 11.058 11.058 0 0 0 323.131 18.053 A 13.078 13.078 0 0 0 322.864 18.933 A 16.543 16.543 0 0 0 322.341 22.328 A 19.246 19.246 0 0 0 322.314 23.34 L 321.436 23.413 A 22.752 22.752 0 0 1 321.625 20.421 A 18.431 18.431 0 0 1 322.034 18.286 A 13.568 13.568 0 0 1 322.885 15.878 A 10.997 10.997 0 0 1 323.84 14.221 Q 325.049 12.5 326.892 11.548 A 8.402 8.402 0 0 1 329.439 10.73 A 11.15 11.15 0 0 1 331.201 10.596 Q 331.812 10.596 332.275 10.669 A 5.246 5.246 0 0 1 332.603 10.731 Q 332.858 10.788 333.057 10.864 Z M 53.955 11.084 L 66.187 11.084 L 66.187 12.427 L 53.955 12.427 L 53.955 11.084 Z" vector-effect="non-scaling-stroke"/></symbol> -->
-  <symbol id="logo" viewBox="0 0 106 31"><title>Slides Framework</title><path d="M17.413 14.04c-.56-5.84-5.6-7-8.52-7-4.6 0-8.6 2.92-8.6 7.52 0 3 2.4 4.88 5.28 5.8 4.24 1.64 5.88 1.84 5.88 3.36 0 1.08-1.2 1.72-2.32 1.72-.28 0-2.24 0-2.52-2.04h-6.6c.6 5.84 5.68 7.36 9.04 7.36 4.92 0 9.04-2.88 9.04-7.76 0-4.8-4-5.92-7.76-6.96-1.76-.52-3.4-1.2-3.4-2.2 0-.6.48-1.48 1.88-1.48 1.96 0 2.04 1.2 2.08 1.68h6.52zm2.222 15.96h6.64v-29.6h-6.64v29.6zm9.662-24.56h6.64v-5.04h-6.64v5.04zm0 24.56h6.64v-22.2h-6.64v22.2zm32.782-29.6h-6.64v9.28c-.72-.72-2.6-2.64-6.52-2.64-5.64 0-11 4.28-11 11.8 0 6.68 4.4 11.88 11.12 11.88 4.48 0 6.08-2.2 6.72-3.12v2.4h6.32v-29.6zm-17.52 18.4c0-2.56 1.8-5.56 5.64-5.56 1.56 0 2.96.56 3.96 1.56 1 .96 1.64 2.32 1.64 3.92.08 1.64-.52 3.08-1.56 4.12s-2.52 1.68-4.12 1.68c-3.12 0-5.56-2.28-5.56-5.68v-.04zm42.502 2.4c.52-4.08-.32-7.64-3.12-10.64-2.08-2.2-5-3.52-8.4-3.52-6.76 0-11.64 5.72-11.64 11.92 0 6.6 5.4 11.76 11.76 11.76 2.28 0 4.48-.68 6.32-2 1.88-1.28 3.44-3.2 4.52-5.68h-6.8c-.8 1.16-1.92 2.08-4.04 2.08-2.6 0-4.84-1.56-5.12-3.92h16.52zm-16.44-5.04c.16-1.04 1.52-3.52 4.96-3.52s4.8 2.48 4.96 3.52h-9.92zm34.502-2.12c-.56-5.84-5.6-7-8.52-7-4.6 0-8.6 2.92-8.6 7.52 0 3 2.4 4.88 5.28 5.8 4.24 1.64 5.88 1.84 5.88 3.36 0 1.08-1.2 1.72-2.32 1.72-.28 0-2.24 0-2.52-2.04h-6.6c.6 5.84 5.68 7.36 9.04 7.36 4.92 0 9.04-2.88 9.04-7.76 0-4.8-4-5.92-7.76-6.96-1.76-.52-3.4-1.2-3.4-2.2 0-.6.48-1.48 1.88-1.48 1.96 0 2.04 1.2 2.08 1.68h6.52z"/></symbol>
-
-  <symbol id="logo-icon" viewBox="0 0 50 41"><title>Slides Framework</title><path d="M4,12h42c2.2,0,4,1.8,4,4v21c0,2.2-1.8,4-4,4H4c-2.2,0-4-1.8-4-4V16C0,13.8,1.8,12,4,12z"/><path opacity="0.6" d="M45.5,9h-41C3.7,9,3,8.3,3,7.5v0C3,6.7,3.7,6,4.5,6h41C46.3,6,47,6.7,47,7.5v0C47,8.3,46.3,9,45.5,9z"/><path opacity="0.4" d="M7.5,0h35C43.3,0,44,0.7,44,1.5v0C44,2.3,43.3,3,42.5,3h-35C6.7,3,6,2.3,6,1.5v0C6,0.7,6.7,0,7.5,0z"/></symbol>
-  
-  <symbol id="close" viewBox="0 0 30 30"><path d="M15 0c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15zm5.7 19.3c.4.4.4 1 0 1.4-.2.2-.4.3-.7.3s-.5-.1-.7-.3l-4.3-4.3-4.3 4.3c-.2.2-.4.3-.7.3s-.5-.1-.7-.3c-.4-.4-.4-1 0-1.4l4.3-4.3-4.3-4.3c-.4-.4-.4-1 0-1.4s1-.4 1.4 0l4.3 4.3 4.3-4.3c.4-.4 1-.4 1.4 0s.4 1 0 1.4l-4.3 4.3 4.3 4.3z"/></symbol>
-  
-  <symbol id="close-small" viewBox="0 0 11 11"><path d="M6.914 5.5l3.793-3.793c.391-.391.391-1.023 0-1.414s-1.023-.391-1.414 0l-3.793 3.793-3.793-3.793c-.391-.391-1.023-.391-1.414 0s-.391 1.023 0 1.414l3.793 3.793-3.793 3.793c-.391.391-.391 1.023 0 1.414.195.195.451.293.707.293s.512-.098.707-.293l3.793-3.793 3.793 3.793c.195.195.451.293.707.293s.512-.098.707-.293c.391-.391.391-1.023 0-1.414l-3.793-3.793z"/></symbol>
-
-  <symbol id="arrow-left" viewBox="0 0 29 56"><path d="M28.7.3c.4.4.4 1 0 1.4l-26.3 26.3 26.3 26.3c.4.4.4 1 0 1.4-.4.4-1 .4-1.4 0l-27-27c-.4-.4-.4-1 0-1.4l27-27c.3-.3 1-.4 1.4 0z"/></symbol>
-  
-  <symbol id="arrow-right" viewBox="0 0 29 56"><path d="M.3 55.7c-.4-.4-.4-1 0-1.4l26.3-26.3-26.3-26.3c-.4-.4-.4-1 0-1.4.4-.4 1-.4 1.4 0l27 27c.4.4.4 1 0 1.4l-27 27c-.3.3-1 .4-1.4 0z"/></symbol>
-
-  <symbol id="back" viewBox="0 0 20 20"><path d="M2.3 10.7l5 5c.4.4 1 .4 1.4 0s.4-1 0-1.4l-3.3-3.3h11.6c.6 0 1-.4 1-1s-.4-1-1-1h-11.6l3.3-3.3c.4-.4.4-1 0-1.4-.2-.2-.4-.3-.7-.3s-.5.1-.7.3l-5 5c-.2.2-.3.5-.3.7 0 .2.1.5.3.7z"/></symbol>
-  
-  <symbol id="menu" viewBox="0 0 18 18"><path d="M16 5h-14c-.6 0-1-.4-1-1 0-.5.4-1 1-1h14c.5 0 1 .4 1 1s-.4 1-1 1zm-14 5h14c.5 0 1-.4 1-1 0-.5-.4-1-1-1h-14c-.6 0-1 .4-1 1s.4 1 1 1zm14 3h-14c-.5 0-1 .4-1 1 0 .5.4 1 1 1h14c.5 0 1-.4 1-1s-.4-1-1-1z"/></symbol>
-  
-  <symbol id="share" viewBox="0 0 18 18"><path d="M16 8c-.6 0-1 .4-1 1v6h-12v-6c0-.6-.4-1-1-1s-1 .4-1 1v6c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-6c0-.6-.4-1-1-1zm-2.3-2.3c.4-.4.4-1 0-1.4l-4-4c-.4-.4-1-.4-1.4 0l-4 4c-.4.4-.4 1 0 1.4s1 .4 1.4 0l2.3-2.3v7.6c0 .6.4 1 1 1s1-.4 1-1v-7.6l2.3 2.3c.4.4 1 .4 1.4 0z"/></symbol>
-
-  <symbol id="arrow-down" viewBox="0 0 24 24"><path d="M12 18c-.2 0-.5-.1-.7-.3l-11-10c-.4-.4-.4-1-.1-1.4.4-.4 1-.4 1.4-.1l10.4 9.4 10.3-9.4c.4-.4 1-.3 1.4.1.4.4.3 1-.1 1.4l-11 10c-.1.2-.4.3-.6.3z"/></symbol>
-  
-  <symbol id="arrow-up" viewBox="0 0 24 24"><path d="M11.9 5.9c.2 0 .5.1.7.3l11 10c.4.4.4 1 .1 1.4-.4.4-1 .4-1.4.1l-10.4-9.4-10.3 9.4c-.4.4-1 .3-1.4-.1-.4-.4-.3-1 .1-1.4l11-10c.1-.2.4-.3.6-.3z"/></symbol>
-  
-  <symbol id="arrow-top" viewBox="0 0 18 18"><path d="M15.7 7.3l-6-6c-.4-.4-1-.4-1.4 0l-6 6c-.4.4-.4 1 0 1.4.4.4 1 .4 1.4 0l4.3-4.3v11.6c0 .6.4 1 1 1s1-.4 1-1v-11.6l4.3 4.3c.2.2.4.3.7.3s.5-.1.7-.3c.4-.4.4-1 0-1.4z"/></symbol>
-  
-  <symbol id="play" viewBox="0 0 30 30"><path d="M7 30v-30l22 15z"/></symbol>
-  
-  <symbol id="chat" viewBox="0 0 18 18"><path d="M5,17c-0.2,0-0.3,0-0.4-0.1C4.2,16.7,4,16.4,4,16v-2H2c-1.1,0-2-0.9-2-2V3c0-1.1,0.9-2,2-2h14c1.1,0,2,0.9,2,2v9 c0,1.1-0.9,2-2,2H9.3l-3.7,2.8C5.4,16.9,5.2,17,5,17z M2,12h3.5C5.8,12,6,12.2,6,12.5V14l2.4-1.8C8.6,12.1,8.8,12,9,12h7V3H2V12z M13,7H5C4.4,7,4,6.6,4,6s0.4-1,1-1h8c0.6,0,1,0.4,1,1S13.6,7,13,7z M13,10H5c-0.6,0-1-0.4-1-1s0.4-1,1-1h8c0.6,0,1,0.4,1,1 S13.6,10,13,10z"/></symbol>
-
-  <symbol id="mail" viewBox="0 0 18 18"><path d="M16 2h-14c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-10c0-1.1-.9-2-2-2zm0 2v.5l-7 4.3-7-4.4v-.4h14zm-14 10v-7.2l6.5 4c.1.1.3.2.5.2s.4-.1.5-.2l6.5-4v7.2h-14z"/></symbol>
-
-  <symbol id="sound-on" viewBox="0 0 18 18"><path d="M8.5,0.1C8.1-0.1,7.7,0,7.4,0.2L3.7,3H2C0.9,3,0,3.9,0,5v6c0,1.1,0.9,2,2,2h1.7l3.7,2.8C7.6,15.9,7.8,16,8,16 c0.2,0,0.3,0,0.4-0.1C8.8,15.7,9,15.4,9,15V1C9,0.6,8.8,0.3,8.5,0.1z M7,13l-2.4-1.8C4.4,11.1,4.2,11,4,11l-2,0l0-6h2 c0.2,0,0.4-0.1,0.6-0.2L7,3V13z M11.7,9.9l0.7,1.9C13.9,11.2,15,9.7,15,8c0-1.7-1.1-3.2-2.7-3.8l-0.7,1.9C12.5,6.4,13,7.2,13,8C13,8.9,12.5,9.6,11.7,9.9z M12.2,1.1l-0.3,2C14.3,3.5,16,5.6,16,8s-1.8,4.5-4.2,4.9l0.3,2C15.6,14.3,18,11.4,18,8C18,4.6,15.6,1.7,12.2,1.1z"/></symbol>
-  
-  <symbol id="sound-off" viewBox="0 0 18 18"><path d="M15.9,8l1.8-1.8c0.4-0.4,0.4-1,0-1.4s-1-0.4-1.4,0l-1.8,1.8l-1.8-1.8c-0.4-0.4-1-0.4-1.4,0s-0.4,1,0,1.4L13.1,8l-1.8,1.8 c-0.4,0.4-0.4,1,0,1.4c0.2,0.2,0.5,0.3,0.7,0.3s0.5-0.1,0.7-0.3l1.8-1.8l1.8,1.8c0.2,0.2,0.5,0.3,0.7,0.3s0.5-0.1,0.7-0.3 c0.4-0.4,0.4-1,0-1.4L15.9,8z M8.5,0.1C8.1-0.1,7.7,0,7.4,0.2L3.7,3H2C0.9,3,0,3.9,0,5v6c0,1.1,0.9,2,2,2h1.7l3.7,2.8C7.6,15.9,7.8,16,8,16 c0.2,0,0.3,0,0.4-0.1C8.8,15.7,9,15.4,9,15V1C9,0.6,8.8,0.3,8.5,0.1z M7,13l-2.4-1.8C4.4,11.1,4.2,11,4,11l-2,0l0-6h2 c0.2,0,0.4-0.1,0.6-0.2L7,3V13z"/></symbol>
-  
-  <!-- social -->
-  <symbol id="apple" viewBox="-1 1 24 24"><path d="M17.6 13.8c0-3 2.5-4.5 2.6-4.6-1.4-2.1-3.6-2.3-4.4-2.4-1.9-.2-3.6 1.1-4.6 1.1-.9 0-2.4-1.1-4-1-2 0-3.9 1.2-5 3-2.1 3.7-.5 9.1 1.5 12.1 1 1.5 2.2 3.1 3.8 3 1.5-.1 2.1-1 3.9-1s2.4 1 4 1 2.7-1.5 3.7-2.9c1.2-1.7 1.6-3.3 1.7-3.4-.1-.1-3.2-1.3-3.2-4.9zm-3.1-9c.8-1 1.4-2.4 1.2-3.8-1.2 0-2.7.8-3.5 1.8-.8.9-1.5 2.3-1.3 3.7 1.4.1 2.8-.7 3.6-1.7z"/></symbol>
-
-  <symbol id="dribbble" viewBox="0 0 24 24"><path d="M12 0c-6.7 0-12 5.3-12 12s5.3 12 12 12 12-5.3 12-12-5.3-12-12-12zm7.9 5.7c1.3 1.7 2.1 3.9 2.3 6.1-.4-.1-2.4-.4-4.7-.4-.8 0-1.5 0-2.3.1 0-.1-.1-.3-.3-.5l-.7-1.5c3.7-1.4 5.3-3.4 5.7-3.8zm-7.9-3.8c2.5 0 4.9.9 6.7 2.5-.3.4-1.9 2.3-5.2 3.6-1.6-2.9-3.3-5.3-3.7-5.9.6-.1 1.4-.2 2.2-.2zm-4.4 1c.4.6 2.1 3 3.7 5.8-4.4 1.2-8.2 1.2-9.2 1.2h-.1c.8-3.1 2.9-5.6 5.6-7zm-5.7 9.1v-.3h.3c1.2 0 5.6-.1 10.1-1.5l.8 1.6c-.1 0-.3 0-.4.1-5.1 1.6-7.9 6-8.3 6.7-1.6-1.7-2.5-4.1-2.5-6.6zm10.1 10.1c-2.3 0-4.4-.8-6.1-2.1.3-.5 2.4-4.4 7.9-6.3 1.3 3.6 2 6.7 2.1 7.6-1.2.6-2.6.8-3.9.8zm5.7-1.8c-.1-.8-.7-3.6-2-7.1.7-.1 1.3-.1 2-.1 2.1 0 3.7.4 4.1.5-.3 2.8-1.8 5.2-4.1 6.7z"/></symbol>
-
-  <symbol id="facebook" viewBox="0 0 24 24"><path d="M24 1.3v21.3c0 .7-.6 1.3-1.3 1.3h-6.1v-9.3h3.1l.5-3.6h-3.6v-2.2c0-1.1.3-1.8 1.8-1.8h1.9v-3.2c-.3 0-1.5-.1-2.8-.1-2.8 0-4.7 1.7-4.7 4.8v2.7h-3.1v3.6h3.1v9.2h-11.5c-.7 0-1.3-.6-1.3-1.3v-21.4c0-.7.6-1.3 1.3-1.3h21.3c.8 0 1.4.6 1.4 1.3z"/></symbol>
-
-  <symbol id="facebook2" viewBox="0 0 512 512"><path d="M288 176v-64c0-17.664 14.336-32 32-32h32v-80h-64c-53.024 0-96 42.976-96 96v80h-64v80h64v256h96v-256h64l32-80h-96z"/></symbol>
-   
-  <symbol id="fb-like" viewBox="0 0 20 20"><path d="M0 8v12h5v-12h-5zm2.5 10.8c-.4 0-.8-.3-.8-.8 0-.4.3-.8.8-.8s.8.3.8.8c0 .4-.4.8-.8.8zm3.5-.8h9.5c1.1 0 1.7-1 1.7-1.7 0-.3-.4-1-.4-1 1.4-.3 1.7-1.2 1.7-1.7-.1-.5-.3-.9-.5-1 1-.4 1.5-1.1 1.4-1.9-.1-.8-1-1.5-1-1.5 1-.6.9-1.5.9-1.5-.3-1.3-1.5-1.7-1.7-1.7h-5.6s.3-.5.3-2.4-1.3-3.6-2.6-3.6c0 0-.7.1-1 .3v3.5l-2.7 4.4v9.8z"/></symbol>
-  
-  <symbol id="googlePlus" viewBox="0 1 24 24"><path d="M7.8 13.5h4.6c-.6 2-2.5 3.4-4.6 3.4-2.7 0-4.9-2.2-4.9-4.9s2.2-4.9 4.9-4.9c1.1 0 2.1.3 3 1l1.8-2.4c-1.4-1.1-3-1.6-4.8-1.6-4.3 0-7.9 3.5-7.9 7.9s3.5 7.9 7.9 7.9 7.9-3.5 7.9-7.9v-1.5h-7.9v3zM21.7 11v-2.2h-2v2.2h-2.2v2h2.2v2.2h2v-2.2h2.2v-2z"/></symbol>
-  
-  <symbol id="instagram" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3.3"/><path d="M13,0H7C2.2,0,0,2.2,0,7v6c0,4.8,2.1,7,7,7h6c4.8,0,7-2.2,7-7V7C20,2.2,17.9,0,13,0z M10,15.1c-2.8,0-5.1-2.3-5.1-5.1 S7.2,4.9,10,4.9s5.1,2.3,5.1,5.1S12.8,15.1,10,15.1z M15.3,5.9c-0.7,0-1.2-0.5-1.2-1.2c0-0.7,0.5-1.2,1.2-1.2s1.2,0.5,1.2,1.2 C16.5,5.3,16,5.9,15.3,5.9z"/></symbol>
-
-  <symbol id="behance" viewBox="0 0 511.958 511.958"><path d="M210.624 240.619c10.624-5.344 18.656-11.296 24.16-17.728 9.792-11.584 14.624-26.944 14.624-45.984 0-18.528-4.832-34.368-14.496-47.648-16.128-21.632-43.424-32.704-82.016-33.28h-152.896v312.096h142.56c16.064 0 30.944-1.376 44.704-4.192 13.76-2.848 25.664-8.064 35.744-15.68 8.96-6.624 16.448-14.848 22.4-24.544 9.408-14.656 14.112-31.264 14.112-49.76 0-17.92-4.128-33.184-12.32-45.728-8.288-12.544-20.448-21.728-36.576-27.552zm-147.552-90.432h68.864c15.136 0 27.616 1.632 37.408 4.864 11.328 4.704 16.992 14.272 16.992 28.864 0 13.088-4.32 22.24-12.864 27.392-8.608 5.152-19.776 7.744-33.472 7.744h-76.928v-68.864zm108.896 198.24c-7.616 3.68-18.336 5.504-32.064 5.504h-76.832v-83.232h77.888c13.568.096 24.128 1.888 31.68 5.248 13.44 6.08 20.128 17.216 20.128 33.504 0 19.2-6.912 32.128-20.8 38.976zM327.168 110.539h135.584v38.848h-135.584zM509.856 263.851c-2.816-18.08-9.024-33.984-18.688-47.712-10.592-15.552-24.032-26.944-40.384-34.144-16.288-7.232-34.624-10.848-55.04-10.816-34.272 0-62.112 10.72-83.648 32-21.472 21.344-32.224 52.032-32.224 92.032 0 42.656 11.872 73.472 35.744 92.384 23.776 18.944 51.232 28.384 82.4 28.384 37.728 0 67.072-11.232 88.032-33.632 13.408-14.144 20.992-28.064 22.656-41.728h-62.464c-3.616 6.752-7.808 12.032-12.608 15.872-8.704 7.04-20.032 10.56-33.92 10.56-13.216 0-24.416-2.912-33.76-8.704-15.424-9.28-23.488-25.536-24.512-48.672h170.464c.256-19.936-.384-35.264-2.048-45.824zm-166.88 5.984c2.24-15.008 7.68-26.912 16.32-35.712 8.64-8.768 20.864-13.184 36.512-13.216 14.432 0 26.496 4.128 36.32 12.416 9.696 8.352 15.168 20.48 16.288 36.512h-105.44z"/></symbol>
-  
-  <symbol id="linkedin" viewBox="0 0 24 24"><path d="M5.9 21.9h-4.7v-14.2h4.7v14.2zm-2.3-16.1c-1.6 0-2.6-1.1-2.6-2.5s1-2.5 2.7-2.5c1.6 0 2.6 1 2.6 2.5-.1 1.4-1.2 2.5-2.7 2.5zm19.2 16.1h-4.7v-7.6c0-2-.7-3.3-2.3-3.3-1.3 0-2.1.9-2.5 1.7-.1.3-.1.8-.1 1.2v7.9h-4.7v-14.1h4.7v2c.7-.9 1.7-2.3 4.3-2.3 3.1 0 5.5 2.1 5.5 6.4v8.2h-.2z"/></symbol>
-
-  <symbol id="medium" viewBox="0 0 130.8 104"><path d="M15.5 21.2c.2-1.6-.5-3.2-1.7-4.3l-12.1-14.7v-2.2h38l29.3 64.4 25.8-64.4h36.2v2.2l-10.5 10c-.9.7-1.3 1.8-1.2 2.9v73.7c0 1.1.3 2.2 1.2 2.9l10.2 10v2.2h-51.3v-2.2l10.6-10.2c1-1 1-1.3 1-2.9v-59.6l-29.4 74.7h-4l-34.2-74.7v50.3c0 2.2.4 4.2 1.9 5.7l13.7 16.8v2.2h-39v-2.2l13.8-16.7c1.5-1.5 1.8-3.3 1.8-5.7l-.1-58.2z"/></symbol>
-  
-  <symbol id="pinterest" viewBox="0 0 24 24"><path d="M5.9 13.9c1.2-2-.4-2.5-.6-4-1-6.1 7.1-10.2 11.4-6 2.9 2.9 1 12-3.7 11-4.6-.9 2.2-8.1-1.4-9.5-3-1.1-4.6 3.6-3.2 5.9-.8 4-2.5 7.7-1.8 12.7 2.3-1.7 3.1-4.8 3.7-8.1 1.2.7 1.8 1.4 3.3 1.5 5.5.4 8.6-5.4 7.8-10.7-.7-4.7-5.5-7.1-10.6-6.6-4.1.4-8.1 3.7-8.3 8.3-.1 2.8.7 4.9 3.4 5.5z"/></symbol>
-  
-  <symbol id="stumbleupon" viewBox="0 0 24 24"><path d="M13.3 9.6l1.6.8 2.5-.8v-1.4c0-3-2.4-5.4-5.4-5.4s-5.4 2.4-5.4 5.4v7.5c0 .7-.6 1.3-1.3 1.3s-1.3-.6-1.3-1.3v-3.2h-4v3.2c0 3 2.4 5.4 5.4 5.4s5.4-2.4 5.4-5.4v-7.5c0-.7.6-1.3 1.3-1.3s1.3.6 1.3 1.3l-.1 1.4zm6.6 2.9v3.2c0 .7-.6 1.3-1.3 1.3s-1.3-.6-1.3-1.3v-3.2l-2.5.8-1.6-.8v3.2c0 3 2.4 5.4 5.4 5.4s5.4-2.4 5.4-5.4v-3.2h-4.1z"/></symbol>
-  
-  <symbol id="twitter" viewBox="0 1 24 23"><path d="M21.5 7.6v.6c0 6.6-5 14.1-14 14.1-2.8 0-5.4-.8-7.6-2.2l1.2.1c2.3 0 4.4-.8 6.1-2.1-2.2 0-4-1.5-4.6-3.4.3.1.6.1.9.1.5 0 .9-.1 1.3-.2-2.1-.6-3.8-2.6-3.8-5 .7.4 1.4.6 2.2.6-1.3-.9-2.2-2.4-2.2-4.1 0-.9.2-1.8.7-2.5 2.4 3 6.1 5 10.2 5.2-.1-.4-.1-.7-.1-1.1 0-2.7 2.2-5 4.9-5 1.4 0 2.7.6 3.6 1.6 1-.3 2.1-.7 3-1.3-.4 1.2-1.1 2.1-2.2 2.7 1-.1 1.9-.4 2.8-.8-.6 1.1-1.4 2-2.4 2.7z"/></symbol>
-  
-  <symbol id="tumblr" viewBox="0 0 23 23"><path d="M12.573 4.94v-4.94h-3.188c-.072.183-.11.4-.11.622-.034.107-.072.184-.072.293-.328 1.829-1.28 3.11-2.892 3.807-.476.218-.914.253-1.39.218v3.987h2.342c.039 5.603.039 8.493.039 8.64v.332c.294 2.449 1.573 3.914 3.843 4.463.914.257 1.901.366 2.892.366 1.279-.036 2.525-.256 3.771-.659v-4.685c-.731.22-1.395.402-1.977.583-1.135.333-2.087.113-2.857-.619-.073-.11-.183-.257-.221-.403-.106-.586-.178-1.206-.178-1.795v-6.222h5.083v-3.988h-5.085z"/></symbol>
-
-  <symbol id="xing" viewBox="0 0 24 24"><path d="M3.647 4.74c-.208 0-.384.073-.472.216-.091.148-.077.338.02.531l2.34 4.051v.02l-3.678 6.49c-.096.191-.091.383 0 .531.088.142.244.236.452.236h3.461c.518 0 .767-.349.944-.669l3.737-6.608-2.38-4.15c-.172-.307-.433-.649-.964-.649h-3.46zm14.542-4.74c-.517 0-.741.326-.927.659l-7.702 13.658 4.918 9.023c.172.307.437.659.967.659h3.457c.208 0 .371-.079.459-.221.092-.148.09-.343-.007-.535l-4.88-8.915v-.023l7.664-13.551c.096-.191.098-.386.007-.534-.088-.142-.252-.221-.46-.221h-3.496z"/></symbol>
-
-  <symbol id="whatsapp" viewBox="0 0 512 512"><path d="M256.064 0h-.128c-141.152 0-255.936 114.816-255.936 256 0 56 18.048 107.904 48.736 150.048l-31.904 95.104 98.4-31.456c40.48 26.816 88.768 42.304 140.832 42.304 141.152 0 255.936-114.848 255.936-256s-114.784-256-255.936-256zm148.96 361.504c-6.176 17.44-30.688 31.904-50.24 36.128-13.376 2.848-30.848 5.12-89.664-19.264-75.232-31.168-123.68-107.616-127.456-112.576-3.616-4.96-30.4-40.48-30.4-77.216s18.656-54.624 26.176-62.304c6.176-6.304 16.384-9.184 26.176-9.184 3.168 0 6.016.16 8.576.288 7.52.32 11.296.768 16.256 12.64 6.176 14.88 21.216 51.616 23.008 55.392 1.824 3.776 3.648 8.896 1.088 13.856-2.4 5.12-4.512 7.392-8.288 11.744-3.776 4.352-7.36 7.68-11.136 12.352-3.456 4.064-7.36 8.416-3.008 15.936 4.352 7.36 19.392 31.904 41.536 51.616 28.576 25.44 51.744 33.568 60.032 37.024 6.176 2.56 13.536 1.952 18.048-2.848 5.728-6.176 12.8-16.416 20-26.496 5.12-7.232 11.584-8.128 18.368-5.568 6.912 2.4 43.488 20.48 51.008 24.224 7.52 3.776 12.48 5.568 14.304 8.736 1.792 3.168 1.792 18.048-4.384 35.52z"/></symbol>
-  
-  <symbol id="youtube" viewBox="0 0 24 24"><path d="M23.6 6.3c-.3-1.2-1.4-2.2-2.6-2.3-3-.3-6-.3-9-.3s-6 0-9 .3c-1.2.1-2.3 1.1-2.6 2.3-.4 1.8-.4 3.8-.4 5.7 0 1.9 0 3.9.4 5.7.3 1.2 1.4 2.2 2.6 2.3 3 .3 6 .3 9 .3s6 0 9-.3c1.3-.1 2.3-1.1 2.6-2.4.4-1.7.4-3.7.4-5.6 0-1.9 0-3.9-.4-5.7zm-14.1 9v-6.6l6.5 3.3-6.5 3.3z"/></symbol>
-
-  <symbol id="googlePlay" viewBox="0 0 30 30"><path d="M13.54 15.28.12 29.34a3.66 3.66 0 0 0 5.33 2.16l15.1-8.6Z" style="fill:#ea4335"/><path d="m27.11 12.89-6.53-3.74-7.35 6.45 7.38 7.28 6.48-3.7a3.54 3.54 0 0 0 1.5-4.79 3.62 3.62 0 0 0-1.5-1.5z" style="fill:#fbbc04"/><path d="M.12 2.66a3.57 3.57 0 0 0-.12.92v24.84a3.57 3.57 0 0 0 .12.92L14 15.64Z" style="fill:#4285f4"/><path d="m13.64 16 6.94-6.85L5.5.51A3.73 3.73 0 0 0 3.63 0 3.64 3.64 0 0 0 .12 2.65Z" style="fill:#34a853"/></symbol>
-</svg>
-
-<!-- Panel Top #05 -->
-<nav class="panel top">
-  <div class="sections desktop">
-    <div class="left"><h1>Detox Launcher</h1></div>
-    <div class="center">
-      <ul class="menu">
-        <li><a href="#top">Home</a></li>
-        <li><a href="#slide-5">Download</a></li>
-        <li><a href="#impressum-slide">Impressum</a></li>
-      </ul>
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>Weniger Handy. <b>Mehr Leben.</b></h1>
+      <p class="lede">Ein ruhiger Startbildschirm für Android: <strong>Uhrzeit, Datum und die paar Apps, die du wirklich brauchst.</strong> Keine Icons, keine roten Badges, kein Feed.</p>
+      <div class="cta-row">
+        <a class="btn" href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.2 2.6c-.3.3-.4.7-.4 1.2v16.4c0 .5.1.9.4 1.2l9.2-9.4-9.2-9.4Zm10.5 8.1 2.7-2.8L6.6 1.9c-.5-.3-1-.3-1.4-.1l9.5 8.9Zm0 2.6-9.5 8.9c.4.2.9.2 1.4-.1l10.8-6-2.7-2.8Zm4.1-4.6-2.9 1.6L13.6 12l2.3 2.3 2.9-1.6c.8-.5.8-1.6 0-2.1v.1Z"/></svg>
+          Kostenlos bei Google Play
+        </a>
+        <span class="facts">Android 11+ · ohne Werbung · 12 Sprachen</span>
+      </div>
     </div>
-    <div class="right"></div>
-  </div>
-  <div class="sections compact hidden">
-    <div class="left bold"><h1>Detox Launcher</h1></div>
-    <!-- <div class="left"><a href="#" title="Slides Framework"><svg style="width:82px;height:24px"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg></a></div> -->
-    <div class="right">
-      <span class="button actionButton sidebarTrigger" data-sidebar-id="1"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#menu"></use></svg></span>
-    </div>
-  </div>
-</nav>
 
-<!-- Sidebar -->
-<nav class="sidebar" data-sidebar-id="1">
-  <div class="close"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#close"></use></svg></div>
-  <div class="content">
-    <a href="#" class="logo"><svg width="37" height="30"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo-icon"></use></svg></a>
-    <ul class="mainMenu margin-top-3">
-      <li><a href="#top" class="sidebarTrigger" data-sidebar-id="1">Home</a></li>
-      <li><a href="#slide-5" class="sidebarTrigger" data-sidebar-id="1">Download</a></li>
-      <li><a href="#impressum-slide" class="sidebarTrigger" data-sidebar-id="1">Impressum</a></li>
-      <li><a href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher&pcampaignid=web_share">Download App</a></li>
-    </ul>
-    <ul class="subMenu small opacity-8">
-      <li><a href="#">Privacy Policy</a></li>
-      <li><a href="mailto:info@detoxlauncher.com">Contact Us</a></li>
-    </ul>
-    <ul class="social opacity-8">
-      <li><a href="#"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#facebook"></use></svg></a></li>
-      <li><a href="#"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#twitter"></use></svg></a></li>
-      <li><a href="#"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#instagram"></use></svg></a></li>
-    </ul>
-  </div>
-</nav>
+    <div class="stage">
+      <span class="try">Probier ihn aus</span>
+      <div class="phone">
+        <div class="screen" id="screen" aria-label="Interaktive Vorschau des Detox Launchers">
+          <span class="cam"></span>
+          <span class="stars" id="stars"></span>
+          <svg class="mtn" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+            <path fill="#7d6c7e" d="M0 60 L30 40 L58 52 L92 22 L124 48 L150 34 L182 58 L214 28 L248 50 L276 36 L300 46 V200 H0Z"/>
+            <path fill="#55506a" d="M0 92 L26 70 L52 84 L84 56 L118 90 L146 66 L176 96 L204 70 L236 98 L268 74 L300 88 V200 H0Z"/>
+            <path fill="#3a3850" d="M0 128 L34 104 L64 122 L96 98 L132 130 L162 108 L196 136 L228 112 L262 134 L300 116 V200 H0Z"/>
+            <path fill="#262535" d="M0 164 L40 140 L76 158 L112 144 L150 168 L190 146 L226 166 L262 150 L300 162 V200 H0Z"/>
+          </svg>
 
-<!-- Slide 2 (#34) -->
-  <section class="slide fade-6 kenBurns" id="top">
-  <div class="content">
-    <div class="container">
-      <div class="wrap">
-      
-        <div class="fix-12-12">
-          <ul class="flex fixedSpaces verticalCenter reverse">
-            <li class="col-6-12 left middle">
-              <h1 class="ae-1 fromLeft">Focus Redefined</h1>
-              <p class="ae-2 fromLeft"><span class="opacity-8">Step into clarity with a sleek home screen that cuts through the digital clutter.</span></p>
-              <!-- <a class="button blue gradient ae-3 fromCenter cropLeft">Get Started</a><a class="button white ae-4 fromCenter">Learn more</a> -->
-              <a href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher&pcampaignid=web_share" class="ae-3 fromLeft button hollow"><img src="assets/img/googleplay.jpg" height="63"/></a>
-            </li>
-            <li class="col-6-12">
-              <img class="ae-4" width="400" src="assets/img/home-dog.png" alt="iPhones Thumbnail" data-action="zoom"/>
-            </li>
-          </ul>
+          <div class="view home" id="home">
+            <button class="tapbtn clock" id="clock" data-open="Uhr" aria-label="Uhr-App öffnen">09:41</button>
+            <div class="date"><button class="tapbtn" id="date" data-open="Kalender">Sa., 07.11.2026</button> · <button class="tapbtn" data-act="stats" aria-label="Bildschirmzeit der Woche anzeigen">1 h 12 min</button></div>
+            <div class="info"><span>6° bewölkt</span> · <button class="tapbtn" data-open="Kalender">14:35 Zahnarzt</button></div>
+            <div class="apps" id="homeApps">
+              <button class="app" data-person="Anna">Anna <span class="dots">•</span></button>
+              <button class="app" data-person="Papa">Papa</button>
+              <button class="app" data-person="Lena">Lena <span class="dots">••</span></button>
+              <span class="sep"></span>
+              <button class="app" data-app="Kamera">Kamera</button>
+              <button class="app" data-app="Maps">Maps</button>
+              <button class="app" data-app="Nachrichten">Nachrichten</button>
+              <button class="app" data-app="Telefon">Telefon</button>
+            </div>
+          </div>
+
+          <div class="view drawer" id="drawer" aria-hidden="true">
+            <div class="search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 9.5 16a6.5 6.5 0 0 0 4.2-1.6l.3.3v.8l5 5 1.5-1.5-5-5Zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9Z"/></svg>
+              <input id="q" type="text" placeholder="Suchen" autocomplete="off" spellcheck="false" aria-label="Apps suchen">
+            </div>
+            <div class="list-wrap">
+              <div class="list" id="list"></div>
+              <div class="alpha" id="alpha"></div>
+            </div>
+          </div>
+
+          <div class="sheet-scrim" id="scrim"></div>
+          <div class="sheet" id="sheet" role="dialog" aria-modal="false"></div>
+          <div class="toast" id="toast"></div>
+          <span class="finger" id="finger" aria-hidden="true"></span>
+          <button class="homebar" id="homebar" aria-label="Zum Startbildschirm"></button>
         </div>
-        
+      </div>
+      <div class="hints">
+        <button class="hint" data-act="drawer">↑ Wischen: alle Apps</button>
+        <button class="hint" data-act="search">Suche mit Tippfehler</button>
+        <button class="hint" data-act="quick">← → Wischen: Schnellstart</button>
+        <button class="hint" data-act="menu">Lange drücken: Menü</button>
+        <button class="hint" data-act="stats">Bildschirmzeit antippen</button>
       </div>
     </div>
   </div>
-  <div class="background" style="background-image:url(assets/img/background/mountain-dude.jpg)"></div>
-  <!-- <div class="background" style="background: linear-gradient(to right, #00ffe5, #ff00c3);"></div> -->
+</div>
+
+<section class="rule statement">
+  <div class="wrap">
+    <h2>Ein Icon lockt.<br><b>Ein Wort wartet.</b></h2>
+    <p>Bunte Symbole und rote Zähler sind dafür gemacht, dass du tippst. Detox Launcher zeigt nur Wörter. Du öffnest eine App, weil du sie brauchst, und nicht, weil sie leuchtet.</p>
+  </div>
 </section>
 
-<!-- Slide 3 (#27) -->
-<section class="slide fade-6 kenBurns" id="slide-2">
-  <div class="content">
-    <div class="container">
-      <div class="wrap">
-        
-        <div class="fix-12-12">
-          <ul class="flex verticalCenter">
-            <li class="col-5-12 cell-27">
-              <div class="fix-4-12">
-                <img width="450" src="assets/img/drawer-dog.png" alt="Apple Watch Thumbnail"/>
-                <!-- <ul class="slider clickable ae-1 fromAbove" data-slider-id="27-2">
-                  <li class="selected"></li>                  
-                </ul> -->
-                <!-- <ul class="controller dots ae-2 fromCenter margin-top-3" data-slider-id="27-2">
-                  <li class="dot selected"></li>
-                </ul> -->
+<section class="rule">
+  <div class="wrap">
+    <div class="feature">
+      <div>
+        <span class="tag">Neu</span>
+        <h3><b>Deine Menschen.</b> Statt deiner Apps.</h3>
+        <p>Drei bis fünf Menschen stehen direkt auf dem Startbildschirm, jeder genau einmal, egal ob ihr über WhatsApp, Signal, Threema oder Telegram schreibt. Ein dezenter Punkt zeigt, dass jemand geschrieben hat. Ein Tipp öffnet den richtigen Chat.</p>
+        <ul>
+          <li>Keine Gruppen, keine Status, kein Feed</li>
+          <li>Nachrichten aller anderen bleiben, wo sie sind</li>
+          <li>Fokuszeit pausiert Apps, aber nie deine Menschen</li>
+        </ul>
+      </div>
+      <div class="visual">
+        <div class="people-demo" aria-label="Beispiel: drei Menschen über den Favoriten">
+          <span>Anna<span class="d">●</span></span>
+          <span>Papa</span>
+          <span>Lena<span class="d d2">●</span><span class="d d3">●</span></span>
+          <hr>
+          <span class="muted">Kamera</span>
+          <span class="muted">Maps</span>
+        </div>
+        <p class="people-note">Ein Punkt: hat geschrieben. Zwei Punkte: in mehreren Messengern.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div>
+        <h3><b>Bildschirmzeit,</b> ohne Extra-App.</h3>
+        <p>Wie lange du heute am Handy warst, steht direkt unter der Uhr. Ein Tipp darauf zeigt deine Woche und die meistgenutzten Apps. Einmal pro Woche gibt es einen kurzen Rückblick. Die Daten bleiben auf deinem Gerät.</p>
+      </div>
+      <div class="visual" aria-label="Beispiel einer Wochenstatistik">
+        <div class="st-today">1 h 12 min</div>
+        <div class="st-sub">heute · Ø 1 h 38 min pro Tag</div>
+        <div class="st-chart" id="stChart"></div>
+        <div class="st-days" id="stDays"></div>
+        <p class="st-note">Beispielwerte</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div>
+        <h3><b>Suche, die mitdenkt.</b></h3>
+        <p>Wisch nach oben und tipp los. Die Suche verzeiht Tippfehler, versteht Initialen und stellt häufig genutzte Apps nach vorne. Auf Wunsch findet sie auch Kontakte zum direkten Anrufen und sucht im Web, mit der Suchmaschine deiner Wahl.</p>
+        <ul>
+          <li>„kamrea“ findet Kamera</li>
+          <li>„gm“ findet Google Maps</li>
+          <li>Enter öffnet den ersten Treffer</li>
+        </ul>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot"><img src="img/search.webp" alt="Suche mit Tippfehler: kamrea findet Kamera" width="420" height="935" loading="lazy"><figcaption>Mit Tippfehler</figcaption></figure>
+        <figure class="shot"><img src="img/contacts.webp" alt="Suche nach ma zeigt Maps, Gmail und die Kontakte Mama und Max" width="420" height="935" loading="lazy"><figcaption>Mit Kontakten</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="feature" id="einhand">
+      <div>
+        <h3><b>Mit einer Hand.</b> Bis zur letzten App.</h3>
+        <p>Die Alphabet-Leiste sitzt unten am Rand, genau dort, wo dein Daumen ohnehin liegt. Du erreichst jede App, ohne umzugreifen und ohne zu tippen.</p>
+        <ol class="steps">
+          <li><span><strong>Buchstaben halten,</strong> bis er einrastet</span></li>
+          <li><span><strong>Nach innen wischen,</strong> die Apps des Buchstabens erscheinen</span></li>
+          <li><span><strong>Nach unten gleiten</strong> und loslassen: Die markierte App öffnet sich</span></li>
+        </ol>
+        <p class="small-note">Wischst du zurück zur Leiste, brichst du ab. Die Leiste kann auch links sitzen.</p>
+      </div>
+      <div class="stage">
+        <div class="phone">
+          <div class="screen" id="screen2" aria-label="Interaktive Vorschau: Apps mit einer Hand über die Alphabet-Leiste wählen">
+            <span class="cam"></span>
+            <div class="drawer2">
+              <div class="search">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 9.5 16a6.5 6.5 0 0 0 4.2-1.6l.3.3v.8l5 5 1.5-1.5-5-5Zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9Z"/></svg>
+                <span class="ph">Suchen</span>
               </div>
-            </li>
-            <li class="col-7-12 left">
-              <h1 class="ae-2 fromRight">Streamlined Access</h1>
-              <div class="ae-3 fromRight">
-                <p class="opacity-8">Enjoy fast, focused navigation with an app drawer featuring only your essentials.</p>
-              </div>
-              <!-- <div class="relative">
-                <img src="assets/img/icon-2.png" class="ae-3 fromCenter app-26" alt="app"/>
-                <div class="text-26">
-                  <h3 class="ae-3 fromRight">Ember for Apple Watch</h3>
-                  <div class="ae-5 fromRight">
-                    <p class="tiny opacity-6">People don&rsquo;t use a product<br>because of the great&nbsp;design.</p>
-                  </div>
-                </div>
-              </div> -->
-            </li>
-          </ul>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-  <div class="background" style="background-image:url(assets/img/background/compass.jpg)"></div>
-</section>
-
-<!-- Slide 4 (#60) -->
-<section class="slide fade-6 kenBurns" id="slide-3">
-  <div class="content">
-    <div class="container">
-      <div class="wrap">
-          
-        <div class="fix-12-12">
-          <ul class="flex verticalCenter">
-            <li class="col-6-12 left">
-              <h1 class="ae-2 fromLeft">Personalize Your Experience</h1>
-              <p class="ae-3 fromLeft"><span class="opacity-8">Tailor your launcher effortlessly with intuitive settings that reflect your style.</span></p>
-              <ul class="tabs controller uppercase bold ae-4 fromCenter" data-slider-id="60-1">
-                <li class="selected">Clock Style</li>
-                <li>Text Style</li>
-                <li>Swipe Gestures</li>
-              </ul>
-            </li>
-            <li class="col-6-12 left ae-5 fromCenter">
-              <ul class="slider animated margin-top-4" data-slider-id="60-1">
-                <li class="selected fromCenter">
-                  <img width="400" src="assets/img/settings-clock-dog.png"/>
-                </li>
-                <li class="fromCenter">                  
-                    <img width="400" src="assets/img/settings-textstyle-dog.png"/>                  
-                </li>
-                <li class="fromCenter">                  
-                    <img width="400" src="assets/img/settings-swipe.png"/>                  
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-  <div class="background" style="background-image:url(assets/img/background/personalize.jpg)"></div>
-</section>
-
-
-<!-- Popup Video -->
-<div class="popup autoplay" data-popup-id="60-1">
-  <div class="close"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#close"></use></svg></div>
-  <div class="content">
-    <div class="container">
-      <div class="wrap">
-        <div class="fix-10-12">
-          <div class="embedVideo popupContent">
-            <iframe src="https://player.vimeo.com/video/101231747?color=ff0179&portrait=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+              <div class="list2" id="list2"></div>
+            </div>
+            <svg class="reach" viewBox="0 0 300 300" aria-hidden="true">
+              <defs><radialGradient id="rg" cx="300" cy="300" r="250" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff" stop-opacity=".09"/><stop offset=".85" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+              </radialGradient></defs>
+              <circle cx="300" cy="300" r="250" fill="url(#rg)"/>
+            </svg>
+            <div class="alpha2" id="alpha2" aria-hidden="true"></div>
+            <div class="bubble" id="bubble2"><b id="bubbleTxt"></b><small id="bubbleSub"></small></div>
+            <span class="arrow2" id="arrow2">←</span>
+            <span class="thumb" id="thumb2"></span>
+            <div class="toast" id="toast2"></div>
+            <span class="homebar" aria-hidden="true"></span>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- Popup Video -->
-<div class="popup autoplay" data-popup-id="60-2">
-  <div class="close"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#close"></use></svg></div>
-  <div class="content">
-    <div class="container">
-      <div class="wrap">
-        <div class="fix-10-12">
-          <div class="embedVideo popupContent">
-            <iframe src="https://player.vimeo.com/video/101231747?color=ff0179&portrait=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-          </div>
+        <div class="hints">
+          <button class="hint" id="replay2">Nochmal ansehen</button>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-
-<!-- Popup Video -->
-<div class="popup autoplay" data-popup-id="60-3">
-  <div class="close"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#close"></use></svg></div>
-  <div class="content">
-    <div class="container">
-      <div class="wrap">
-        <div class="fix-10-12">
-          <div class="embedVideo popupContent">
-            <iframe src="https://player.vimeo.com/video/101231747?color=ff0179&portrait=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Slide 5 (#91) -->
-<section class="slide fade-6 kenBurns" id="slide-4">
-  <div class="content">
-    <div class="container">
-      <div class="wrap">
-      
-        <div class="fix-12-12 toCenter">
-          <div class="fix-7-12">
-            <!-- <p class="margin-bottom-2 ae-1"><span class="opacity-6">Case study</p> -->
-            <h1 class="ae-2 huge fromAbove margin-bottom-2">Simplify Your Digital Life</h1>
-            <!-- <a href="#" class="button green gradient ae-3">Purchase</a> -->
-          </div>
-          <ul class="grid fixedSpaces left margin-top-10">
-            <li class="col-3-12 col-tablet-1-2 col-phablet-1-1 ae-4 fromLeft">
-             <h3>Inspiration</h3>
-             <p class="tiny opacity-6">We live in a world full of digital noise and distractions. Detox Launcher helps you reclaim your time, focus on what truly matters, and break free from the endless cycle of notifications.</p>
-            </li>
-            <li class="col-3-12 col-tablet-1-2 col-phablet-1-1 ae-5 fromLeft">
-              <h3>Creativity</h3>
-              <p class="tiny opacity-6">Creativity thrives in moments of clarity. By decluttering your digital space, Detox Launcher allows your mind to breathe, think freely, and explore new ideas without distractions.</p>
-             </li>
-            <li class="col-3-12 col-tablet-1-2 col-phablet-1-1 ae-5 fromLeft">
-             <h3>Simplicity</h3>
-             <p class="tiny opacity-6">Simplicity is powerful—but achieving it is an art. Detox Launcher strips away the unnecessary, leaving you with a clean, intentional interface designed to enhance your digital well-being.</p>
-            </li>
-            <li class="col-3-12 col-tablet-1-2 col-phablet-1-1 ae-6 fromLeft">
-             <h3>Mindful Living</h3>
-             <p class="tiny opacity-6">Technology should work for you, not control you. Detox Launcher encourages a mindful smartphone experience by reducing distractions and promoting intentional usage.</p>
-            </li>
-          </ul>
-        </div>
-                
-      </div>
-    </div>
-  </div>
-  <div class="background" style="background-image:url(assets/img/background/desk.jpg)"></div>
 </section>
 
-
-<!-- Slide 7 (#95) -->
-<section class="slide fade-6 kenBurns" id="slide-5">
-  <div class="content">
-    <div class="container">
-      <div class="wrap">
-      
-        <div class="fix-6-12">
-          <h1 class="huge ae-1 margin-bottom-2">Download Mobile App</h1>
-          <p class="hero ae-2 margin-bottom-3"><span class="opacity-8">and keep your focus on the important things.</span></p>
-
-          <a href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher&pcampaignid=web_share" class="button hollow ae-6"><img src="assets/img/googleplay.jpg" height="63"/></a>
-        </div>
-                
-      </div>
+<section class="rule">
+  <div class="wrap">
+    <div class="more-head">
+      <p class="eyebrow">Und außerdem</p>
+      <h2>Ruhig, aber deins.</h2>
+    </div>
+    <div class="more">
+      <div><h4>Gesten statt Icons</h4><p>Nach links oder rechts wischen startet deine zwei Schnellstart-Apps. Lange drücken öffnet das Menü.</p></div>
+      <div><h4>Fokuszeit</h4><p>Ausgewählte Apps pausieren täglich zu festen Zeiten. Sie verschwinden von der Startseite und sind in der Liste ausgegraut.</p></div>
+      <div><h4>Wetter und nächster Termin</h4><p>Eine leise Zeile unter dem Datum. Mehr Information braucht ein Startbildschirm nicht.</p></div>
+      <div><h4>Schrift und Farben</h4><p>Stärke, Größe und Ausrichtung von Uhr und Apps. Auf Wunsch wechseln die Farben mit der Tageszeit.</p></div>
+      <div><h4>Aus den Augen</h4><p>Apps umbenennen oder ausblenden. Ausgeblendete Apps findest du am Ende der Liste.</p></div>
+      <div><h4>In einer Minute eingerichtet</h4><p>Ein kurzer Assistent schlägt deine wichtigsten Apps vor. Mindestens drei auswählen, fertig.</p></div>
+    </div>
+    <div class="strip" aria-label="Screenshots">
+      <figure class="shot"><img src="img/home.webp" alt="Startbildschirm mit Uhr, Datum, Bildschirmzeit und vier Apps" width="420" height="935" loading="lazy"><figcaption>Startbildschirm</figcaption></figure>
+      <figure class="shot"><img src="img/settings.webp" alt="Einstellungen für Schriftstärke und Gesten" width="420" height="935" loading="lazy"><figcaption>Einstellungen</figcaption></figure>
+      <figure class="shot"><img src="img/search.webp" alt="Suche mit Tippfehler" width="420" height="935" loading="lazy"><figcaption>Suche</figcaption></figure>
+      <figure class="shot"><img src="img/contacts.webp" alt="Kontakte in der Suche" width="420" height="935" loading="lazy"><figcaption>Kontakte</figcaption></figure>
     </div>
   </div>
-  <div class="background" style="background-image:url(assets/img/background/focus-mountains.jpg)"></div>
 </section>
 
-<!-- Impressum Slide -->
-<section class="slide fade-6 kenBurns" id="impressum-slide">
-  <div class="content">
-    <div class="container">
-      <div class="wrap">
-        <div class="fix-10-12">
-          <h1 class="ae-1">Impressum</h1>
-          <div class="left margin-bottom-3 ae-2">
-            <h3>Contact Information</h3>
-            <p>Kevin Paul<br>            
-            89075 Ulm<br>
-            Germany</p>
-            
-            <h3>Contact</h3>
-            <p>Email: kevin.p4ul@gmail.com<br>
-            </p>
-            
-            <h3>Responsible for Content</h3>
-            <p>Kevin Paul</p>
-            
-            <h3>Disclaimer</h3>
-            <p>Despite careful content control, we assume no liability for the content of external links. The operators of the linked pages are solely responsible for their content.</p>
-          </div>
-        </div>
-      </div>
+<section class="rule promise">
+  <div class="wrap">
+    <div class="promise-lines">
+      <span><b>Keine</b> Werbung.</span>
+      <span><b>Kein</b> Tracking.</span>
+      <span><b>Kein</b> Konto.</span>
+    </div>
+    <div class="promise-grid">
+      <div><h4>Deine Daten bleiben bei dir</h4><p>Bildschirmzeit, Kontakte und Termine sind optional und werden nur auf deinem Gerät verarbeitet. Alle Berechtigungen siehst du in den Einstellungen auf einen Blick.</p></div>
+      <div><h4>Du kannst jederzeit zurück</h4><p>In den Android-Einstellungen unter „Standard-Apps › Startbildschirm-App“ wählst du einfach wieder deinen alten Launcher. Es wird nichts gelöscht.</p></div>
     </div>
   </div>
-  <div class="background" style="background-image:url(assets/img/background/desk.jpg)"></div>
 </section>
 
-<!-- Panel Bottom #01 -->
-<nav class="panel bottom forceMobileView">
-  <div class="sections desktop">
-    <div class="left"><a href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher&pcampaignid=web_share" class="opacity-8">Available <svg style="height:21px;"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#googlePlay"></use></svg> Android</a></div>
-    <div class="center"><span class="nextSlide"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-down"></use></svg></span></div>
-    <div class="right">
-      <span data-dropdown-id="2" class="button actionButton dropdownTrigger"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#share"></use></svg></span>
+<section class="rule final">
+  <div class="wrap">
+    <h2>Probier es eine Woche.<br><b>Dann schau auf die Uhr.</b></h2>
+    <p>Kostenlos, ohne Anmeldung, in einer Minute eingerichtet.</p>
+    <div class="cta-row">
+      <a class="btn" href="https://play.google.com/store/apps/details?id=com.kevinnovation.detoxlauncher" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.2 2.6c-.3.3-.4.7-.4 1.2v16.4c0 .5.1.9.4 1.2l9.2-9.4-9.2-9.4Zm10.5 8.1 2.7-2.8L6.6 1.9c-.5-.3-1-.3-1.4-.1l9.5 8.9Zm0 2.6-9.5 8.9c.4.2.9.2 1.4-.1l10.8-6-2.7-2.8Zm4.1-4.6-2.9 1.6L13.6 12l2.3 2.3 2.9-1.6c.8-.5.8-1.6 0-2.1v.1Z"/></svg>
+        Kostenlos bei Google Play
+      </a>
     </div>
   </div>
-  <div class="sections compact hidden">
-    <div class="right">
-      <span data-dropdown-id="2" class="button actionButton dropdownTrigger"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#share"></use></svg></span>
-    </div>
-  </div>
-</nav>
+</section>
 
-<!-- Share Window -->
-<div class="dropdown share bottom right" data-dropdown-id="2" data-text="Take a look at this" data-url="https://designmodo.com" data-pinterest-image="https://designmodo.com/wp-content/uploads/2015/10/Presentation.jpg">
-  <div class="center padding-2">
-    <div class="title">Share</div>
-    <a href="#">Contact us</a>
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 Kevin Paul, Ulm · Diese Seite setzt keine Cookies.</span>
+    <nav>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="impressum.html">Impressum</a>
+      <a href="mailto:kevin.p4ul@gmail.com">Kontakt</a>
+    </nav>
   </div>
-  <ul>
-    <li class="social-facebook"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#fb-like"></use></svg></li>
-    <li class="social-twitter"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#twitter"></use></svg></li>
-    <li class="social-googlePlus"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#googlePlus"></use></svg></li>
-    <li class="social-linkedin"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#linkedin"></use></svg></li>
-    <li class="mail" data-subject="Subject" data-body="Body">share by email</li>
-  </ul>
-</div>
+</footer>
 
-<!-- Loading Progress Bar -->
-<div class="progress-bar blue"></div>
-		
+<script>
+(function () {
+  const screen = document.getElementById('screen');
+  const sheet = document.getElementById('sheet');
+  const toastEl = document.getElementById('toast');
+  const q = document.getElementById('q');
+  const list = document.getElementById('list');
+  const alpha = document.getElementById('alpha');
+  const drawer = document.getElementById('drawer');
+
+  /* Sterne */
+  (function () {
+    const s = []; let seed = 7;
+    const r = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    for (let i = 0; i < 70; i++) {
+      const a = (0.25 + r() * 0.6).toFixed(2);
+      s.push(`${Math.round(r() * 300)}px ${Math.round(r() * 380)}px 0 ${r() > .9 ? 0.6 : 0}px rgba(255,255,255,${a})`);
+    }
+    const el = document.getElementById('stars');
+    el.style.boxShadow = s.join(',');
+    el.style.transform = 'scale(' + (screen.clientWidth / 300).toFixed(3) + ')';
+    el.style.transformOrigin = '0 0';
+  })();
+
+  /* Uhr */
+  const days = ['So.', 'Mo.', 'Di.', 'Mi.', 'Do.', 'Fr.', 'Sa.'];
+  const pad = n => String(n).padStart(2, '0');
+  function tick() {
+    const d = new Date();
+    document.getElementById('clock').textContent = pad(d.getHours()) + ':' + pad(d.getMinutes());
+    document.getElementById('date').textContent =
+      `${days[d.getDay()]}, ${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
+  }
+  tick(); setInterval(tick, 10000);
+
+  /* Wochenstatistik (Beispielwerte) */
+  const week = [104, 131, 88, 97, 122, 141, 72];
+  function weekLabels() {
+    const out = []; const t = new Date();
+    for (let i = 6; i >= 0; i--) { const d = new Date(t); d.setDate(t.getDate() - i); out.push(days[d.getDay()]); }
+    return out;
+  }
+  const labels = weekLabels();
+  const max = Math.max(...week);
+  document.getElementById('stChart').innerHTML = week.map((m, i) =>
+    `<div class="${i === 6 ? 'now' : ''}" style="height:${(m / max * 100).toFixed(0)}%;animation-delay:${i * 70}ms" title="${Math.floor(m / 60)} h ${m % 60} min"></div>`).join('');
+  document.getElementById('stDays').innerHTML = labels.map((l, i) => `<span class="${i === 6 ? 'now' : ''}">${l}</span>`).join('');
+
+  /* Apps und Kontakte */
+  const apps = ['Bahn', 'Banking', 'Bücher', 'Chrome', 'Einstellungen', 'Fotos', 'Gmail', 'Google Maps', 'Kalender', 'Kamera',
+    'Kontakte', 'Komoot', 'Musik', 'Nachrichten', 'Notizen', 'Podcasts', 'Rechner', 'Signal', 'Spotify', 'Telefon',
+    'Threema', 'Uhr', 'Wecker', 'Wetter', 'WhatsApp'];
+  const minutes = { 'Google Maps': '6 min', 'Chrome': '7 min', 'WhatsApp': '14 min', 'Kamera': '2 min' };
+  const contacts = ['Anna Müller', 'Lena Berger', 'Mama', 'Max Mustermann', 'Papa'];
+
+  const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  function osa(a, b) {
+    const d = [];
+    for (let i = 0; i <= a.length; i++) { d[i] = [i]; }
+    for (let j = 0; j <= b.length; j++) { d[0][j] = j; }
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
+      const c = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + c);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+    }
+    return d[a.length][b.length];
+  }
+  function score(query, name) {
+    const qq = norm(query), n = norm(name);
+    if (!qq) return 0;
+    if (n.startsWith(qq)) return 100;
+    const words = n.split(/\s+/);
+    if (words.some(w => w.startsWith(qq))) return 90;
+    if (qq.length > 1 && words.map(w => w[0]).join('').startsWith(qq)) return 85;
+    if (n.includes(qq)) return 70;
+    if (qq.length >= 4) {
+      const best = Math.min(...words.map(w => osa(qq, w.slice(0, qq.length))), osa(qq, n.slice(0, qq.length)));
+      if (best <= (qq.length > 6 ? 2 : 1)) return 60 - best;
+    }
+    return -1;
+  }
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const phoneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></svg>';
+  const globeIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8ZM12 4c.8 1.2 1.5 2.5 1.9 4h-3.8c.4-1.5 1.1-2.8 1.9-4ZM4.3 14a8.2 8.2 0 0 1 0-4h3.4a16.5 16.5 0 0 0 0 4H4.3Zm.8 2h3a15.7 15.7 0 0 0 1.3 3.6A8 8 0 0 1 5.1 16Zm3-8h-3a8 8 0 0 1 4.3-3.6C8.8 5.5 8.4 6.7 8.1 8ZM12 20c-.8-1.2-1.5-2.5-1.9-4h3.8c-.4 1.5-1.1 2.8-1.9 4Zm2.3-6H9.7a14.7 14.7 0 0 1 0-4h4.6a14.7 14.7 0 0 1 0 4Zm.3 5.6c.6-1.1 1.1-2.3 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6Zm1.7-5.6a16.5 16.5 0 0 0 0-4h3.4a8.2 8.2 0 0 1 0 4h-3.4Z"/></svg>';
+
+  function renderList() {
+    const query = q.value.trim();
+    if (!query) {
+      let html = '', last = '';
+      apps.forEach(a => {
+        const L = norm(a)[0].toUpperCase();
+        const id = L !== last ? ` id="L-${L}"` : ''; last = L;
+        html += `<button class="app" data-app="${esc(a)}"${id}>${esc(a)}${minutes[a] ? ` <span class="min">${minutes[a]}</span>` : ''}</button><br>`;
+      });
+      list.innerHTML = html;
+      alpha.hidden = false;
+      return;
+    }
+    alpha.hidden = true;
+    const hits = apps.map(a => [a, score(query, a)]).filter(x => x[1] >= 0).sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0])).slice(0, 5);
+    const cHits = contacts.filter(c => score(query, c) >= 70).slice(0, 2);
+    let html = hits.map(([a], i) => `<button class="app${i === 0 ? ' hit' : ''}" data-app="${esc(a)}">${esc(a)}${minutes[a] ? ` <span class="min">${minutes[a]}</span>` : ''}</button><br>`).join('');
+    if (cHits.length) {
+      html += '<div class="label">Kontakte</div>' + cHits.map(c =>
+        `<div class="row-contact"><button class="app" data-call="${esc(c)}">${esc(c)}</button>${phoneIcon}</div>`).join('');
+    }
+    html += `<button class="app web" data-web="1">${globeIcon} Im Web suchen: „${esc(query)}“</button>`;
+    list.innerHTML = html;
+  }
+  const letters = [...new Set(apps.map(a => norm(a)[0].toUpperCase()))];
+  alpha.innerHTML = letters.map(L => `<button data-letter="${L}" aria-label="Zu ${L} springen">${L}</button>`).join('');
+  renderList();
+  q.addEventListener('input', renderList);
+  q.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { const first = list.querySelector('[data-app]'); if (first && q.value.trim()) open(first.dataset.app); }
+    if (e.key === 'Escape') goHome();
+  });
+
+  /* Zustände */
+  let state = 'home';
+  function setDrawer(on) {
+    screen.classList.toggle('is-drawer', on);
+    drawer.setAttribute('aria-hidden', on ? 'false' : 'true');
+    state = on ? 'drawer' : 'home';
+  }
+  function goHome() { closeSheet(); setDrawer(false); q.value = ''; renderList(); q.blur(); }
+  function openDrawer(focusSearch) { closeSheet(); setDrawer(true); if (focusSearch) setTimeout(() => q.focus({ preventScroll: true }), 380); }
+
+  let toastT;
+  function toast(msg) {
+    toastEl.textContent = msg; toastEl.classList.add('on');
+    clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), 1500);
+  }
+  function open(name) { toast(name + ' öffnet sich …'); }
+  /* Schnellstart-Apps: in den Einstellungen frei wählbar */
+  const quickApps = { left: 'Spotify', right: 'Notizen' };
+  function quick(dir) { toast((dir === 'left' ? '← ' : '→ ') + quickApps[dir] + ' öffnet sich …'); }
+
+  function showSheet(html) { sheet.innerHTML = html; screen.classList.add('is-sheet'); }
+  function closeSheet() { screen.classList.remove('is-sheet'); }
+  document.getElementById('scrim').addEventListener('click', closeSheet);
+
+  function appMenu(name) {
+    showSheet(`<h4>${esc(name)}</h4>
+      <div class="opt">Von Favoriten entfernen</div>
+      <div class="opt">Umbenennen</div>
+      <div class="opt">Ausblenden</div>
+      <div class="opt">Fokuszeit</div>
+      <div class="opt">App-Info</div>`);
+  }
+  const people = {
+    Anna: { full: 'Anna Müller', rows: [['<span class="new">● Signal</span>', '<small class="new">neu · 14:02</small>'], ['WhatsApp', '★'], ['Anrufen', ''], ['SMS', '']] },
+    Papa: { full: 'Papa', rows: [['WhatsApp', '★'], ['Anrufen', ''], ['WhatsApp-Anruf', '']] },
+    Lena: { full: 'Lena Berger', rows: [['<span class="new">● WhatsApp</span>', '<small class="new">neu · 13:48</small>'], ['<span class="new">● Threema</span>', '<small class="new">neu · 12:10</small>'], ['Anrufen', '']] }
+  };
+  function personMenu(key) {
+    const p = people[key];
+    showSheet(`<h4>${esc(p.full)}</h4>` + p.rows.map(r => `<div class="opt"><span>${r[0]}</span><span>${r[1]}</span></div>`).join(''));
+  }
+  function stats() {
+    const lbl = weekLabels();
+    showSheet(`<h4>Bildschirmzeit</h4>
+      <div class="big">1 h 12 min</div>
+      <div style="opacity:.7;font-size:.8em">heute · Ø 1 h 38 min pro Tag</div>
+      <div class="bars">${week.map((m, i) => `<div class="bar${i === 6 ? '' : ' dim'}" style="height:${(m / max * 100).toFixed(0)}%"></div>`).join('')}</div>
+      <div class="bar-l">${lbl.map(l => `<span>${l}</span>`).join('')}</div>
+      <div class="sample">Beispielwerte</div>`);
+  }
+
+  /* Gesten: Wischen, Tippen, lange Drücken */
+  let start = null, lpTimer = null, longFired = false;
+  screen.addEventListener('pointerdown', e => {
+    if (e.target.closest('input, .alpha, .homebar')) return;
+    start = { x: e.clientX, y: e.clientY, t: Date.now(), target: e.target, scrollTop: list.scrollTop };
+    longFired = false;
+    const hit = e.target.closest('[data-app], [data-person]');
+    clearTimeout(lpTimer);
+    lpTimer = setTimeout(() => {
+      longFired = true;
+      if (hit && hit.dataset.person) personMenu(hit.dataset.person);
+      else if (hit && hit.dataset.app) appMenu(hit.dataset.app);
+      else if (state === 'home') showSheet('<h4>Einstellungen</h4><div class="opt">Startbildschirm</div><div class="opt">Darstellung</div><div class="opt">Bildschirmzeit</div><div class="opt">Fokuszeit</div><div class="opt">Deine Menschen</div>');
+    }, 480);
+  });
+  screen.addEventListener('pointermove', e => {
+    if (!start) return;
+    if (Math.abs(e.clientY - start.y) > 8 || Math.abs(e.clientX - start.x) > 8) clearTimeout(lpTimer);
+  });
+  function end(e) {
+    clearTimeout(lpTimer);
+    if (!start) return;
+    const dy = e.clientY - start.y, dx = e.clientX - start.x;
+    const s = start; start = null;
+    if (longFired) return;
+    if (screen.classList.contains('is-sheet')) return;
+    if (state === 'home' && dy < -40 && Math.abs(dy) > Math.abs(dx)) { openDrawer(false); return; }
+    if (state === 'home' && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { quick(dx > 0 ? 'right' : 'left'); return; }
+    if (state === 'drawer' && dy > 50 && s.scrollTop <= 0 && list.scrollTop <= 0 && Math.abs(dy) > Math.abs(dx)) { goHome(); return; }
+    if (Math.abs(dx) < 8 && Math.abs(dy) < 8) tap(s.target);
+  }
+  screen.addEventListener('pointerup', end);
+  screen.addEventListener('pointercancel', () => { clearTimeout(lpTimer); start = null; });
+
+  function tap(t) {
+    const el = t.closest('[data-app], [data-person], [data-call], [data-web], [data-act], [data-open]');
+    if (!el) return;
+    if (el.dataset.open) open(el.dataset.open);
+    else if (el.dataset.app) open(el.dataset.app);
+    else if (el.dataset.person) open('Chat mit ' + el.dataset.person);
+    else if (el.dataset.call) toast(el.dataset.call + ' wird angerufen …');
+    else if (el.dataset.web) toast('Websuche öffnet sich …');
+    else if (el.dataset.act === 'stats') stats();
+  }
+  /* Tastatur: Enter/Leertaste auf Buttons im Telefon */
+  screen.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('button') && !e.target.closest('.alpha') && e.target.id !== 'homebar') {
+      e.preventDefault(); tap(e.target);
+    }
+    if (e.key === 'Escape') { if (screen.classList.contains('is-sheet')) closeSheet(); else goHome(); }
+  });
+  screen.addEventListener('click', e => { if (e.detail === 0 && e.target.matches('[data-app],[data-person]')) e.preventDefault(); });
+
+  alpha.addEventListener('click', e => {
+    const b = e.target.closest('[data-letter]'); if (!b) return;
+    const target = document.getElementById('L-' + b.dataset.letter);
+    if (target) list.scrollTo({ top: target.offsetTop - list.offsetTop, behavior: 'smooth' });
+  });
+  document.getElementById('homebar').addEventListener('click', goHome);
+
+  /* Einmalige Selbstvorführung: hochwischen, Tippfehler suchen, zurück */
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finger = document.getElementById('finger');
+  let demoTimers = [], demoDone = false;
+  function stopDemo() {
+    demoDone = true;
+    demoTimers.forEach(clearTimeout); demoTimers = [];
+    finger.classList.remove('on', 'up');
+  }
+  function runDemo() {
+    if (demoDone || reduced) return;
+    demoDone = true;
+    const at = (ms, fn) => demoTimers.push(setTimeout(fn, ms));
+    at(0, () => finger.classList.add('on'));
+    at(350, () => finger.classList.add('up'));
+    at(700, () => openDrawer(false));
+    at(1050, () => finger.classList.remove('on'));
+    at(1400, () => finger.classList.remove('up'));
+    const word = 'kamrea';
+    for (let i = 1; i <= word.length; i++) at(1500 + i * 130, () => { q.value = word.slice(0, i); renderList(); });
+    at(3400, () => goHome());
+    at(3800, () => { demoTimers = []; });
+  }
+  screen.addEventListener('pointerdown', stopDemo, true);
+  screen.addEventListener('keydown', stopDemo, true);
+  q.addEventListener('focus', () => { if (demoTimers.length) stopDemo(); });
+  if ('IntersectionObserver' in window) {
+    let seen = false;
+    const io = new IntersectionObserver(es => {
+      if (!seen && es.some(e => e.isIntersecting)) { seen = true; io.disconnect(); setTimeout(runDemo, 1000); }
+    }, { threshold: .6 });
+    io.observe(screen);
+  } else setTimeout(runDemo, 1000);
+
+  /* Punkte und Balken beim ersten Hineinscrollen abspielen */
+  if ('IntersectionObserver' in window && !reduced) {
+    const io2 = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('play'); io2.unobserve(e.target); }
+    }), { threshold: .5 });
+    document.querySelectorAll('.people-demo, .st-chart').forEach(el => io2.observe(el));
+  }
+
+  /* Hinweis-Buttons unter dem Telefon */
+  document.querySelectorAll('.hint').forEach(b => b.addEventListener('click', () => {
+    stopDemo();
+    const a = b.dataset.act;
+    if (a === 'drawer') { goHome(); setTimeout(() => openDrawer(false), 40); }
+    if (a === 'search') {
+      openDrawer(false); q.value = '';
+      const word = 'kamrea'; let i = 0;
+      const typer = setInterval(() => { q.value = word.slice(0, ++i); renderList(); if (i >= word.length) clearInterval(typer); }, 110);
+    }
+    if (a === 'menu') { goHome(); setTimeout(() => appMenu('Kamera'), 60); }
+    if (a === 'quick') { goHome(); setTimeout(() => quick('left'), 60); }
+    if (a === 'stats') { goHome(); setTimeout(stats, 60); }
+  }));
+
+  /* ---------- Einhandbedienung: Alphabet-Leiste halten, nach innen wischen, gleiten ---------- */
+  (function () {
+    const sc = document.getElementById('screen2');
+    if (!sc) return;
+    const list2 = document.getElementById('list2');
+    const alpha2 = document.getElementById('alpha2');
+    const bubble = document.getElementById('bubble2');
+    const bTxt = document.getElementById('bubbleTxt');
+    const bSub = document.getElementById('bubbleSub');
+    const arrow = document.getElementById('arrow2');
+    const thumb = document.getElementById('thumb2');
+    const toast2 = document.getElementById('toast2');
+
+    const sorted = [...apps].sort((a, b) => a.localeCompare(b, 'de'));
+    const byL = {};
+    sorted.forEach(a => { const L = norm(a)[0].toUpperCase(); (byL[L] = byL[L] || []).push(a); });
+    const letters2 = Object.keys(byL);
+    list2.innerHTML = sorted.map(a => `<div class="it" data-l="${norm(a)[0].toUpperCase()}">${esc(a)}</div>`).join('');
+    alpha2.innerHTML = letters2.map(L => `<span data-l="${L}">${L}</span>`).join('');
+
+    const u = () => sc.clientWidth / 300;
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    let phase = 'idle', letter = null, holdT = null, holdRef = null, armRef = null, cur = { x: 0, y: 0 };
+    let anchorY = 0, idx = 0, step = 20;
+
+    function alphaBox() {
+      const r = alpha2.getBoundingClientRect(), s = sc.getBoundingClientRect();
+      return { top: r.top - s.top, h: r.height, cx: r.left - s.left + r.width / 2, bottom: r.bottom - s.top };
+    }
+    function letterAt(y) {
+      const b = alphaBox();
+      return letters2[clamp(Math.floor((y - b.top) / b.h * letters2.length), 0, letters2.length - 1)];
+    }
+    function yOf(L) { const b = alphaBox(); return b.top + (letters2.indexOf(L) + .5) * b.h / letters2.length; }
+    function clearHit() { list2.querySelectorAll('.hit').forEach(el => el.classList.remove('hit')); }
+    function scrollTo(L, i) {
+      const items = list2.querySelectorAll(`[data-l="${L}"]`);
+      const el = items[i] || items[0];
+      if (el) list2.scrollTop = el.offsetTop - list2.clientHeight * .25;
+      return el;
+    }
+    function showLetter(L) {
+      bubble.classList.add('on'); bubble.classList.remove('app');
+      bTxt.textContent = L; bSub.textContent = '';
+      alpha2.querySelectorAll('span').forEach(s => s.classList.toggle('cur', s.dataset.l === L));
+      clearHit(); scrollTo(L, 0);
+    }
+    function setThumb(p, on) { thumb.style.left = p.x + 'px'; thumb.style.top = p.y + 'px'; thumb.classList.toggle('on', on); }
+    function showArrow(p, txt) {
+      arrow.textContent = txt; arrow.style.left = p.x + 'px'; arrow.style.top = (p.y - 22 * u()) + 'px';
+      arrow.classList.add('on');
+    }
+    function setArmed(on) { alpha2.classList.toggle('armed', on); bubble.classList.toggle('armed', on); if (!on) arrow.classList.remove('on'); }
+    function startHold(p) {
+      clearTimeout(holdT); holdRef = p;
+      holdT = setTimeout(() => {
+        if (phase !== 'letter') return;
+        phase = 'armed'; armRef = { ...cur }; setArmed(true); showArrow(cur, '←');
+      }, 160);
+    }
+    function selectIdx(i) {
+      idx = i;
+      const a = byL[letter][i];
+      bubble.classList.add('app'); bTxt.textContent = a; bSub.textContent = 'Loslassen zum Öffnen';
+      clearHit(); const el = scrollTo(letter, i); if (el) el.classList.add('hit');
+    }
+    function down(p) {
+      cur = p; phase = 'letter'; letter = letterAt(p.y); showLetter(letter); setThumb(p, true); startHold(p);
+    }
+    function move(p) {
+      cur = p; setThumb(p, true);
+      if (phase === 'letter') {
+        const L = letterAt(p.y);
+        if (L !== letter) { letter = L; showLetter(L); }
+        if (Math.hypot(p.x - holdRef.x, p.y - holdRef.y) > 6 * u()) startHold(p);
+      } else if (phase === 'armed') {
+        const inward = armRef.x - p.x, dy = Math.abs(p.y - armRef.y);
+        if (inward >= 24 * u()) {
+          phase = 'selecting'; anchorY = p.y;
+          const space = alphaBox().bottom - p.y;
+          step = clamp(space / byL[letter].length, 14 * u(), 28 * u());
+          selectIdx(0); showArrow(p, '↕');
+        } else if (dy > 24 * u() && dy > inward) {
+          phase = 'letter'; setArmed(false); letter = letterAt(p.y); showLetter(letter); startHold(p);
+        } else {
+          if (inward < 6 * u()) { const L = letterAt(p.y); if (L !== letter) { letter = L; showLetter(L); armRef = { ...p }; } }
+          showArrow(p, '←');
+        }
+      } else if (phase === 'selecting') {
+        const inward = armRef.x - p.x;
+        if (inward < 12 * u()) { phase = 'armed'; showLetter(letter); showArrow(p, '←'); return; }
+        if (p.y < anchorY) anchorY = p.y;
+        const i = clamp(Math.floor((p.y - anchorY) / step), 0, byL[letter].length - 1);
+        if (i !== idx) selectIdx(i);
+        showArrow(p, '↕');
+      }
+    }
+    let t2;
+    function toastIt(msg) { toast2.textContent = msg; toast2.classList.add('on'); clearTimeout(t2); t2 = setTimeout(() => toast2.classList.remove('on'), 1500); }
+    function up() {
+      clearTimeout(holdT);
+      const chosen = phase === 'selecting' ? byL[letter][idx] : null;
+      phase = 'idle'; setArmed(false); bubble.classList.remove('on', 'app');
+      alpha2.querySelectorAll('.cur').forEach(s => s.classList.remove('cur'));
+      setThumb(cur, false);
+      if (chosen) { toastIt(chosen + ' öffnet sich …'); setTimeout(clearHit, 900); } else clearHit();
+    }
+
+    const local = e => { const r = sc.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    alpha2.addEventListener('pointerdown', e => {
+      e.preventDefault(); stopDemo2();
+      try { alpha2.setPointerCapture(e.pointerId); } catch (_) {}
+      down(local(e));
+    });
+    alpha2.addEventListener('pointermove', e => { if (phase !== 'idle' && !demoRunning) move(local(e)); });
+    alpha2.addEventListener('pointerup', () => { if (!demoRunning) up(); });
+    alpha2.addEventListener('pointercancel', () => { if (!demoRunning) up(); });
+    list2.addEventListener('click', e => { const it = e.target.closest('.it'); if (it) toastIt(it.textContent + ' öffnet sich …'); });
+    sc.addEventListener('pointerdown', () => stopDemo2(), true);
+
+    /* Vorführung: K bis S scrubben, halten, nach innen, eine App weiter, loslassen */
+    let demoRunning = false, runId = 0;
+    const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    function wait(ms) { return new Promise(res => setTimeout(res, ms)); }
+    function glide(to, ms, id) {
+      const from = { ...cur }, t0 = performance.now();
+      return new Promise(res => {
+        (function f(now) {
+          if (id !== runId) return res();
+          const k = Math.min(1, (now - t0) / ms), e = ease(k);
+          move({ x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e });
+          k < 1 ? requestAnimationFrame(f) : res();
+        })(t0);
+      });
+    }
+    async function demo2() {
+      if (reduced) return;
+      stopDemo2();
+      const id = ++runId; demoRunning = true;
+      const live = () => id === runId;
+      const b = alphaBox();
+      cur = { x: b.cx, y: yOf('K') }; setThumb(cur, true);
+      await wait(350); if (!live()) return;
+      down({ ...cur });
+      await glide({ x: b.cx, y: yOf('S') }, 900, id); if (!live()) return;
+      await wait(550); if (!live()) return;
+      await glide({ x: b.cx - 44 * u(), y: cur.y - 2 }, 380, id); if (!live()) return;
+      await wait(450); if (!live()) return;
+      await glide({ x: cur.x - 4 * u(), y: anchorY + step * 1.4 }, 520, id); if (!live()) return;
+      await wait(650); if (!live()) return;
+      demoRunning = false; up();
+    }
+    function stopDemo2() {
+      if (!demoRunning) return;
+      runId++; demoRunning = false; phase = 'idle'; up();
+    }
+
+    document.getElementById('replay2').addEventListener('click', demo2);
+    if ('IntersectionObserver' in window) {
+      const io3 = new IntersectionObserver(es => {
+        if (es.some(e => e.isIntersecting)) { io3.disconnect(); setTimeout(demo2, 500); }
+      }, { threshold: .7 });
+      io3.observe(sc);
+    }
+  })();
+})();
+</script>
 </body>
 </html>
